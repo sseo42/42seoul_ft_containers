@@ -1,7 +1,6 @@
 #ifndef FT_VECTOR_HPP
 # define FT_VECTOR_HPP
 
-# include <iostream>
 # include "ft_iter.hpp"
 # include <memory>
 
@@ -16,24 +15,24 @@
  * Capacity:
  *      size        clear
  *      max_size    clear
- *      resize
+ *      resize      clear
  *      capacity    clear
- *      empty
- *      reserve
+ *      empty       clear
+ *      reserve     clear
  * 
  * Element access:
- *      operator[]
- *      at
- *      front
- *      back
+ *      operator[]  clear
+ *      at          clear
+ *      front       clear
+ *      back        clear
  *      
  * Modifiers:
  *      assign      clear
  *      push_back   clear
- *      pop_back
- *      insert
- *      erase
- *      swap
+ *      pop_back    clear
+ *      insert      clear
+ *      erase       clear
+ *      swap        clear
  *      clear       clear
  */
 
@@ -73,9 +72,9 @@ public:
 
     void    m_swap_data(VectorImpl& x)
     {
-        std::swap(m_start, x.m_start);
-        std::swap(m_finish, x.finish);
-        std::swap(m_end_of_storage, x.m_end_of_storage);
+        std::swap(m_impl.m_start, x.m_start);
+        std::swap(m_impl.m_finish, x.m_finish);
+        std::swap(m_impl.m_end_of_storage, x.m_end_of_storage);
     }
 
     pointer m_allocate(size_t n)
@@ -144,7 +143,7 @@ public:
     {
         clear();
         Base::m_deallocate(this->m_impl.m_start,
-            std::distance(this->m_impl.m_start, this->m_impl.m_end_of_storage)); // check
+            size_t(this->m_impl.m_end_of_storage - this->m_impl.m_start));
     }
 
     // Vector& operator=(const Vector& v)
@@ -182,7 +181,7 @@ public:
 
     size_t capacity() const
     {
-        return std::distance(this->m_impl.m_start, this->m_impl.m_end_of_storage);
+        return size_t(this->m_impl.m_end_of_storage - this->m_impl.m_start);
     }
 
     void clear()
@@ -192,6 +191,14 @@ public:
 
     void assign(size_t n, const value_type& val)
     { m_fill_assign(n, val); }
+
+    void resize(size_t new_size, value_type x = value_type())
+    {
+        if (new_size > size())
+            m_fill_insert(end(), new_size - size(), x);
+        else if (new_size < size())
+            m_erase_at_end(this->m_impl.m_start + new_size);
+    }
 
     void push_back(const value_type& x)
     {
@@ -206,6 +213,119 @@ public:
         }
     }
 
+    bool empty() const
+    { return (begin() == end()); }
+
+    void reserve(size_t n)
+    {
+        if (n > max_size())
+            throw std::length_error("vector::reserve");
+        if (this->capacity() < n)
+        {
+            pointer new_start = Base::m_allocate(n);
+            pointer new_finish = std::uninitialized_copy(this->m_impl.start,
+                this->m_impl.m_finish, new_start);
+            ft::destroy(this->m_impl.m_start, this->m_impl.m_finish,
+                Base::m_get_tp_allocator());
+            Base::m_deallocate(this->m_impl.m_start,
+                size_t(this->m_impl.m_end_of_storage - this->m_impl.start));
+            this->m_impl.m_start = new_start;
+            this->m_impl.m_finish = new_finish;
+            this->m_impl.m_end_of_storage = new_start + n;
+        }
+    }
+
+    reference operator[](size_t n)
+    { return *(this->m_impl.m_start + n); }
+
+    const reference operator[](size_t n) const
+    { return *(this->m_impl.m_start + n); }
+
+    reference at(size_t n)
+    {
+        if (n >= this->size())
+            throw std::length_error("vector::at");
+        return (*this)[n];
+    }
+
+    const reference at(size_t n) const
+    {
+        if (n >= this->size())
+            throw std::length_error("vector::at");
+        return (*this)[n];
+    }
+
+    reference front()
+    { return *begin(); }
+
+    const reference front() const
+    { return *begin(); }
+
+    reference back()
+    { return *(end() - 1); }
+
+    const reference back() const
+    { return *(end() - 1); }
+
+    void pop_back()
+    { m_erase_at_end(this->m_impl.m_finish - 1); }
+
+    iterator insert(iterator pos, const value_type& x)
+    {
+        size_t len = std::distance(begin(), pos);
+        m_fill_insert(pos, 1, x);
+        return (begin() + len);
+    }
+    void insert(iterator pos, size_t n, const value_type& x)
+    {
+        m_fill_insert(pos, n, x);
+    }
+    template<typename InputIter>
+    void insert(iterator pos, InputIter first, InputIter last)
+    {
+        typedef typename ft::is_integer<InputIter>::type Integral;
+        m_insert_dispatch(pos, first, last, Integral());
+    }
+
+    iterator erase(iterator pos) //not detecting pos error
+    {
+        iterator cur = pos;
+        while (1)
+        {
+            this->m_impl.destroy(ft::addressof(*cur));
+            if (cur + 1 == end())
+                break ;
+            std::uninitialized_copy(cur + 1, cur + 2, cur);
+            cur++;
+        }
+        --this->m_impl.m_finish;
+        return (pos);
+    }
+    iterator erase(iterator first, iterator last)
+    {
+        size_t len = std::distance(first, last);
+        iterator cur = first;
+        if (first != last)
+        {
+            ft::destroy(first, last, Base::m_get_tp_allocator());
+            while (last != end())
+            {
+                std::uninitialized_copy(last, last + 1, cur);
+                this->m_impl.destroy(ft::addressof(*last));
+                cur++;
+                last++;
+            }
+            this->m_impl.m_finish -= len;
+        }
+        return first;
+    }
+    void swap(Vector& x)
+    {
+        Alloc one = this->m_get_tp_allocator();
+        Alloc two = x.m_get_tp_allocator();
+        Base::m_swap_data(x.m_impl);
+        std::swap(one, two);
+    }
 protected:
     template<typename Integer>
     void m_initialize_dispatch(Integer n, Integer val, TrueType)
@@ -246,19 +366,97 @@ protected:
     }
     void m_fill_initialize(size_t n, const value_type& val)
     {
-        this->m_impl.m_finish = std::uninitialized_fill_n(this->m_impl.m_start, n, val);
+        std::uninitialized_fill_n(this->m_impl.m_start, n, val);
+        this->m_impl.m_finish = this->m_impl.m_start + n;
+    }
+    template<typename Integer>
+    void m_insert_dispatch(iterator pos, Integer n, Integer val, TrueType)
+    {
+        m_fill_insert(pos, n, val);
+    }
+    template<typename InputIter>
+    void m_insert_dispatch(iterator pos, InputIter first, InputIter last, FalseType)
+    {
+        for (; first != last; ++first)
+        {
+            pos = insert(pos, *first);
+            ++pos;
+        }
+    }
+    void m_fill_insert(iterator pos, size_t n, const value_type& x)
+    {
+        if (n != 0)
+        {
+            if (size_t(this->m_impl.m_end_of_storage - this->m_impl.m_finish) >= n)
+            {
+                const size_t elems_after = std::distance(pos, end());
+                pointer old_finish(this->m_impl.m_finish);
+                if (elems_after > n)
+                {
+                    std::uninitialized_copy(this->m_impl.m_finish - n,
+                        this->m_impl.m_finish, this->m_impl.m_finish);
+                    this->m_impl.m_finish += n;
+                    ft::destroy(old_finish - elems_after + n, old_finish,
+                        Base::m_get_tp_allocator());
+                    std::uninitialized_copy(pos, pos + elems_after - n,
+                        old_finish - elems_after + n);
+                    std::fill(pos, pos + n, x);
+                }
+                else
+                {
+                    std::uninitialized_fill_n(this->m_impl.m_finish, n - elems_after, x);
+                    this->m_impl.m_finish += n - elems_after;
+                    std::uninitialized_copy(this->m_impl.m_finish - n,
+                        old_finish, this->m_impl.m_finish);
+                    this->m_impl.m_finish += elems_after;
+                    std::fill(pos, pos + n, x);
+                }
+            }
+            else
+            {
+                const size_t len = m_check_len(n, "vector:: m_default_append");
+                const size_t elems_before = std::distance(begin(), pos);
+                pointer new_start(this->m_allocate(len));
+                pointer new_finish(new_start);
+                try
+                {
+                    std::uninitialized_fill_n(new_start + elems_before, n, x);
+                    new_finish = pointer();
+                    new_finish = std::uninitialized_copy(this->begin(), pos, new_start);
+                    new_finish += n;
+                    new_finish = std::uninitialized_copy(pos, this->end(), new_finish);
+                }
+                catch(...)
+                {
+                    if (!new_finish)
+                        ft::destroy(new_start + elems_before,
+                            new_start + elems_before + n, Base::m_get_tp_allocator());
+                    else
+                        ft::destroy(new_start, new_finish, Base::m_get_tp_allocator());
+                    Base::m_deallocate(new_start, len);
+                    throw ;
+                }
+                ft::destroy(this->m_impl.m_start, this->m_impl.m_finish,
+                    Base::m_get_tp_allocator());
+                Base::m_deallocate(this->m_impl.m_start,
+                    size_t(this->m_impl.m_end_of_storage - this->m_impl.m_start));
+                this->m_impl.m_start = new_start;
+                this->m_impl.m_finish = new_finish;
+                this->m_impl.m_end_of_storage = new_start + len;
+            }
+        }
     }
     void m_fill_assign(size_t n, const value_type& val)
     {
         if (n > capacity())
         {
-            Vector tmp(n, val, m_get_tp_allocator());
-            Base::m_swap_data(tmp); //check here
+            Vector tmp(n, val, Base::m_get_tp_allocator());
+            Base::m_swap_data(tmp.m_impl);
         }
         else if (n > size())
         {
-            std::fill(begin(), end(), val);
-            std::uninitialized_fill_n(this.m_impl.m_finish, n - size(), val);
+            std::fill(begin(), end(), val); //leaks check
+            std::uninitialized_fill_n(this->m_impl.m_finish, n - size(), val);
         }
         else
         {
@@ -276,7 +474,7 @@ protected:
         const size_t elems_before = std::distance(this->begin(), pos);
         pointer new_start = this->m_allocate(len);
         pointer new_finish = new_start;
-        try     //insert elem at pos and push all data after pos
+        try     //insert elem at pos and push back all data after pos
         {
             this->m_impl.construct(new_start + elems_before, x);
             new_finish = pointer();
@@ -288,7 +486,7 @@ protected:
         catch(...)
         {
             if (!new_finish)
-                this->m_impl.destroy(new_start + elems_before); //error by ++operator
+                this->m_impl.destroy(new_start + elems_before);
             else
                 ft::destroy(new_start, new_finish, Base::m_get_tp_allocator());
             Base::m_deallocate(new_start, len);
@@ -296,7 +494,7 @@ protected:
         }
         ft::destroy(this->m_impl.m_start, this->m_impl.m_finish, Base::m_get_tp_allocator());
         Base::m_deallocate(this->m_impl.m_start,
-            std::distance(this->m_impl.m_start, this->m_impl.m_finish));
+            size_t(this->m_impl.m_end_of_storage - this->m_impl.m_start));
         this->m_impl.m_start = new_start;
         this->m_impl.m_finish = new_finish;
         this->m_impl.m_end_of_storage = this->m_impl.m_start + len;
