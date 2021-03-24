@@ -37,8 +37,8 @@
  *      remove      clear
  *      remove_if   clear
  *      unique      clear
- *      merge
- *      sort
+ *      merge       clear
+ *      sort        clear
  *      reverse     clear
  */
 
@@ -50,13 +50,30 @@ struct ListNodeBase
     ListNodeBase* m_prev;
 
     static void swap(ListNodeBase& x, ListNodeBase& y)
-    {   
-        x.m_prev->m_next = ft::addressof(y);
-        x.m_next->m_prev = ft::addressof(y);
-        y.m_prev->m_next = ft::addressof(x);
-        y.m_next->m_prev = ft::addressof(x);
+    {
+        if (x.m_next == ft::addressof(x) && y.m_next == ft::addressof(y))
+            return ;
+        if (x.m_next != ft::addressof(x))
+        {
+            x.m_prev->m_next = ft::addressof(y);
+            x.m_next->m_prev = ft::addressof(y);
+        }
+        if (y.m_next != ft::addressof(y))
+        {
+            y.m_prev->m_next = ft::addressof(x);
+            y.m_next->m_prev = ft::addressof(x);
+        }
+        if (x.m_next == ft::addressof(x))
+        {
+            x.m_prev = ft::addressof(y);
+            x.m_next = ft::addressof(y);
+        }
+        else if (y.m_next == ft::addressof(y))
+        {
+            y.m_prev = ft::addressof(x);
+            y.m_next = ft::addressof(x);
+        }
     }
-
     void m_reverse()
     {
         ListNodeBase* cur = this->m_prev;
@@ -287,7 +304,7 @@ public:
 };
 
 template<typename Tp, typename Alloc = std::allocator<Tp> >
-class List : ListBase<Tp, Alloc>
+class List : public ListBase<Tp, Alloc>
 {
 public:
     typedef Alloc                                   Alloc_type;
@@ -355,7 +372,7 @@ public:
     { return const_reverse_iterator(begin()); }
 
     bool empty() const
-    { return (this->m_impl.m_node.m_next == this->m_impl.m_node.m_prev); }
+    { return (this->m_impl.m_node.m_next == ft::addressof(this->m_impl.m_node)); }
 
     size_t size() const
     { return this->m_node_count(); }
@@ -437,7 +454,6 @@ public:
     {
         ft::ListNodeBase::swap(this->m_impl.m_node, x.m_impl.m_node);
         typename Base::List_impl tmp;
-
         tmp = this->m_impl;
         this->m_impl = x.m_impl;
         x.m_impl = tmp;
@@ -458,14 +474,15 @@ public:
 
     void splice(iterator pos, List& x, iterator i)
     {
-        iterator j = i + 1;
+        iterator j = i;
 
+        ++j;
         if (pos == i || pos == j)
             return ;
         if (this != ft::addressof(x))
             m_check_equal_allocator(Base::m_get_node_allocator(),
                 x.Base::m_get_node_allocator());
-        this->m_tranfer(pos, i, j);
+        this->m_transfer(pos, i, j);
     }
     void splice(iterator pos, List& x, iterator first, iterator last)
     {
@@ -490,7 +507,7 @@ public:
     }
 
     template<typename Predicate>
-    void removeif(Predicate pred)
+    void remove_if(Predicate pred)
     {
         for (iterator i = begin(); i != end(); )
         {
@@ -538,12 +555,144 @@ public:
     }
 
     void merge(List& x)
-    {  }
+    {
+        if (this != ft::addressof(x))
+        {
+            m_check_equal_allocator(Base::m_get_node_allocator(),
+                x.Base::m_get_node_allocator());
+            iterator first1 = this->begin();
+            iterator last1 = this->end();
+            iterator first2 = x.begin();
+            iterator last2 = x.end();
+
+            while (first1 != last1 && first2 != last2)
+            {
+                if (*first1 > *first2)
+                {
+                    iterator tmp = first2;
+                    this->m_transfer(first1, first2, ++tmp);
+                    first2 = tmp;
+                }
+                else
+                {
+                    ++first1;
+                }
+            }
+            if (first2 != last2)
+            {
+                this->m_transfer(first1, first2, last2);
+            }
+        }
+    }
 
     template<typename Compare>
     void merge(List& x, Compare comp)
-    { }
+    {
+        if (this != ft::addressof(x))
+        {
+            m_check_equal_allocator(Base::m_get_node_allocator(),
+                x.Base::m_get_node_allocator());
+            iterator first1 = this->begin();
+            iterator last1 = this->end();
+            iterator first2 = x.begin();
+            iterator last2 = x.end();
 
+            while (first1 != last1 && first2 != last2)
+            {
+                if (comp(*first2, *first1))
+                {
+                    iterator tmp = first2;
+                    this->m_transfer(first1, first2, ++tmp);
+                    first2 = tmp;
+                }
+                else
+                {
+                    ++first1;
+                }
+            }
+            if (first2 != last2)
+            {
+                this->m_transfer(first1, first2, last2);
+            }
+        }
+    }
+
+    void sort()
+    {
+        if (this->m_impl.m_node.m_next == this->m_impl.m_node.m_prev)
+            return ;
+        List carry;
+        List tmp[64];
+        List* last = tmp;
+        List* counter;
+        try
+        {
+            do
+            {
+                carry.splice(carry.begin(), *this, this->begin());
+                for (counter = tmp; counter != last && !counter->empty();
+                    ++counter)
+                {
+                    counter->merge(carry);
+                    carry.swap(*counter);
+                }
+                carry.swap(*counter);
+                if (counter == last)
+                    ++last;
+            }
+            while ( !this->empty() );
+            for (counter = tmp + 1; counter != last; ++counter)
+                counter->merge(*(counter - 1));
+            swap(*(last - 1));
+        }
+        catch(...)
+        {
+            this->splice(this->end(), carry);
+            for (int i = 0; i < sizeof(tmp) / sizeof(tmp[0]); ++i)
+                this->splice(this->end(), tmp[i]);
+            throw ;
+        }
+        
+    }
+    template<typename Compare>
+    void sort(Compare comp)
+    {
+        if (this->m_impl.m_node.m_next == this->m_impl.m_node.m_prev)
+            return ;
+        List carry;
+        List tmp[64];
+        List* last = tmp;
+        List* counter;
+
+        try
+        {
+            do
+            {
+                carry.splice(carry.begin(), *this, this->begin());
+                for (counter = tmp; counter != last && !counter->empty();
+                    ++counter)
+                {
+                    counter->merge(carry, comp);
+                    carry.swap(*counter);
+                }
+                carry.swap(*counter);
+                if (counter == last)
+                    ++last;
+            }
+            while (!empty());
+            
+            for (counter = tmp + 1; counter != last; ++counter)
+                counter->merge(*(counter - 1), comp);
+            swap(*(last - 1));
+        }
+        catch(...)
+        {
+            this->splice(this->end(), carry);
+            for (int i = 0; i < sizeof(tmp) / sizeof(tmp[0]); ++i)
+                this->splice(this->end(), tmp[i]);
+            throw ;
+        }
+    }
     void reverse()
     { this->m_impl.m_node.m_reverse(); }
 
@@ -607,7 +756,10 @@ protected:
         Tp_alloc_type(Base::m_get_node_allocator()).destroy(tmp->m_valptr());
         m_put_node(tmp);
     }
-
+    void m_transfer(iterator pos, iterator first, iterator last)
+    {
+        pos.m_node->m_transfer(first.m_node, last.m_node);
+    }
     const_iterator m_resize_pos(size_t& new_size)
     {
         const_iterator i;
