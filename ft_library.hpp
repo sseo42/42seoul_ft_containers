@@ -2,7 +2,7 @@
 # define FT_LIBRARY_HPP
 
 # include <stdlib.h>
-#include <iostream>
+# include <iostream>
 
 namespace ft
 {
@@ -55,4 +55,4 @@ void destroy(ForwardIter first, ForwardIter last, Alloc& alloc)
 }
 } // namespace ft
 
-#endif /*FT_PIBRARY_HPP */
+#endif /*FT_LIBRARY_HPP */

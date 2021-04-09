@@ -1,5 +1,5 @@
-#ifndef FT_MAP_HPP
-# define FT_MAP_HPP
+#ifndef FT_SET_HPP
+# define FT_SET_HPP
 
 # include "ft_rbtree.hpp"
 # include "ft_function.hpp"
@@ -47,11 +47,11 @@ namespace ft
 
 template<typename Key, typename Tp, typename Compare = std::less<Key>,
     typename Alloc = std::allocator<std::pair<const Key, Tp> > >
-class Map
+class Set
 {
 public:
     typedef Key                                         key_type;
-    typedef Tp                                          mapped_type;
+    typedef Tp                                          Setped_type;
     typedef std::pair<const Key, Tp>                    value_type;
     typedef Compare                                     key_compare;
     typedef Alloc                                       allocator_type;
@@ -59,7 +59,7 @@ public:
     class value_compare : public std::binary_function<value_type, value_type, bool>
     {
     public:
-        friend class Map<Key, Tp, Compare, Alloc>;
+        friend class Set<Key, Tp, Compare, Alloc>;
 
         bool operator()(const value_type& x, const value_type& y) const
         { return comp(x.first, y.first); }
@@ -87,23 +87,23 @@ public:
     typedef typename Rep_type::const_reverse_iterator   const_reverse_iterator;
     typedef typename Rep_type::difference_type          difference_type;
 
-    Map() : m_t() {}
-    Map(const Compare& comp, const allocator_type& a = allocator_type())
+    Set() : m_t() {}
+    Set(const Compare& comp, const allocator_type& a = allocator_type())
         : m_t(comp, Pair_allocator(a)) {}
-    Map(const Map& x) : m_t(x.m_t) {}
+    Set(const Set& x) : m_t(x.m_t) {}
 
     template<typename InputIter>
-    Map(InputIter first, InputIter last) : m_t()
+    Set(InputIter first, InputIter last) : m_t()
     { m_t.m_insert_unique(first, last); }
 
     template<typename InputIter>
-    Map(InputIter first, InputIter last, const Compare& comp,
+    Set(InputIter first, InputIter last, const Compare& comp,
         const allocator_type& a = allocator_type()) : m_t(comp, Pair_allocator(a))
     { m_t.m_insert_unique(first, last); }
 
-    ~Map() {}
+    ~Set() {}
 
-    Map& operator=(const Map& x)
+    Set& operator=(const Set& x)
     { m_t = x.m_t; return *this; }
 
     iterator begin()
@@ -139,11 +139,11 @@ public:
     size_t max_size() const
     { return m_t.max_size(); }
 
-    mapped_type& operator[](const key_type& k)
+    Setped_type& operator[](const key_type& k)
     {
         iterator i = lower_bound(k);
         if (i == end() || key_comp()(k, (*i).first))
-            i = insert(i, value_type(k, mapped_type()));
+            i = insert(i, value_type(k, Setped_type()));
         return (*i).second;
     }
 
@@ -166,7 +166,7 @@ public:
     void erase(iterator first, iterator last)
     { m_t.erase(first, last); }
 
-    void swap(Map& x)
+    void swap(Set& x)
     { m_t.swap(x.m_t); }
 
     void clear()
@@ -206,13 +206,13 @@ public:
     { return m_t.equal_range(x); }
 
     template<typename _Key, typename _Tp, typename _Compare, typename _Alloc>
-    friend bool operator==(const Map<_Key, _Tp, _Compare, _Alloc>& x,
-	    const Map<_Key, _Tp, _Compare, _Alloc>& y)
+    friend bool operator==(const Set<_Key, _Tp, _Compare, _Alloc>& x,
+	    const Set<_Key, _Tp, _Compare, _Alloc>& y)
     { return x.m_t == y.m_t; }
 
     template<typename _Key, typename _Tp, typename _Compare, typename _Alloc>
-    friend bool operator<(const Map<_Key, _Tp, _Compare, _Alloc>& x,
-	    const Map<_Key, _Tp, _Compare, _Alloc>& y)
+    friend bool operator<(const Set<_Key, _Tp, _Compare, _Alloc>& x,
+	    const Set<_Key, _Tp, _Compare, _Alloc>& y)
     { return x.m_t < y.m_t; }
 
 private:
@@ -220,29 +220,29 @@ private:
 };
 
 template<typename _Key, typename _Tp, typename _Compare, typename _Alloc>
-inline bool operator!=(const Map<_Key, _Tp, _Compare, _Alloc>& x,
-    const Map<_Key, _Tp, _Compare, _Alloc>& y)
+inline bool operator!=(const Set<_Key, _Tp, _Compare, _Alloc>& x,
+    const Set<_Key, _Tp, _Compare, _Alloc>& y)
 { return !(x.m_t == y.m_t); }
 
 template<typename _Key, typename _Tp, typename _Compare, typename _Alloc>
-inline bool operator>(const Map<_Key, _Tp, _Compare, _Alloc>& x,
-    const Map<_Key, _Tp, _Compare, _Alloc>& y)
+inline bool operator>(const Set<_Key, _Tp, _Compare, _Alloc>& x,
+    const Set<_Key, _Tp, _Compare, _Alloc>& y)
 { return y < x; }
 
 template<typename _Key, typename _Tp, typename _Compare, typename _Alloc>
-inline bool operator<=(const Map<_Key, _Tp, _Compare, _Alloc>& x,
-    const Map<_Key, _Tp, _Compare, _Alloc>& y)
+inline bool operator<=(const Set<_Key, _Tp, _Compare, _Alloc>& x,
+    const Set<_Key, _Tp, _Compare, _Alloc>& y)
 { return !(y < x); }
 
 template<typename _Key, typename _Tp, typename _Compare, typename _Alloc>
-inline bool operator>=(const Map<_Key, _Tp, _Compare, _Alloc>& x,
-    const Map<_Key, _Tp, _Compare, _Alloc>& y)
+inline bool operator>=(const Set<_Key, _Tp, _Compare, _Alloc>& x,
+    const Set<_Key, _Tp, _Compare, _Alloc>& y)
 { return !(x < y); }
 
 template<typename Key, typename Tp, typename Compare, typename Alloc>
-inline void swap(Map<Key, Tp, Compare, Alloc>& x, Map<Key, Tp, Compare, Alloc>& y)
+inline void swap(Set<Key, Tp, Compare, Alloc>& x, Set<Key, Tp, Compare, Alloc>& y)
 { x.swap(y); }
 
 } // namespace ft
 
-#endif /* FT_MAP_HPP */
+#endif /* FT_SET_HPP */
