@@ -15,6 +15,16 @@ struct Select1st : public std::unary_function<Pair, typename Pair::first_type>
     const typename Pair::first_type& operator()(const Pair& x) const
     { return x.first; }
 };
+
+template<typename Tp>
+struct Identity : public std::unary_function<Tp, Tp>
+{
+    Tp& operator()(Tp& x) const
+    { return x; }
+
+    const Tp& operator()(const Tp& x) const
+    { return x; }
+};
 } // namespace ft
 
 #endif /*FT_FUNCTION_HPP */

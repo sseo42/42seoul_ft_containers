@@ -21,9 +21,6 @@
  *      size        clear
  *      max_size    clear
  * 
- * element access:
- *      operator[]  clear
- * 
  * modifiers:
  *      insert      clear
  *      erase       clear
@@ -45,51 +42,37 @@
 namespace ft
 {
 
-template<typename Key, typename Tp, typename Compare = std::less<Key>,
-    typename Alloc = std::allocator<std::pair<const Key, Tp> > >
+template<typename Key, typename Compare = std::less<Key>,
+    typename Alloc = std::allocator<Key> >
 class Set
 {
 public:
     typedef Key                                         key_type;
-    typedef Tp                                          Setped_type;
-    typedef std::pair<const Key, Tp>                    value_type;
+    typedef Key                                         value_type;
     typedef Compare                                     key_compare;
+    typedef Compare                                     value_compare;
     typedef Alloc                                       allocator_type;
-
-    class value_compare : public std::binary_function<value_type, value_type, bool>
-    {
-    public:
-        friend class Set<Key, Tp, Compare, Alloc>;
-
-        bool operator()(const value_type& x, const value_type& y) const
-        { return comp(x.first, y.first); }
-
-    protected:
-        value_compare(Compare c) : comp(c) {}
-
-        Compare comp;
-    };
 
 private:
     typedef typename std::allocator<Alloc>::template
-        rebind<value_type>::other                       Pair_allocator;
-    typedef ft::Rbtree<key_type, value_type, ft::Select1st<value_type>,
-        key_compare, Pair_allocator>                    Rep_type;
+        rebind<key>::other                              Key_allocator;
+    typedef ft::Rbtree<key_type, value_type, ft::Identity<value_type>,
+        key_compare, Key_allocator>                     Rep_type;
 
 public:
-    typedef typename Pair_allocator::pointer            pointer;
-    typedef typename Pair_allocator::const_pointer      const_pointer;
-    typedef typename Pair_allocator::reference          reference;
-    typedef typename Pair_allocator::const_reference    const_reference;
-    typedef typename Rep_type::iterator                 iterator;
+    typedef typename Key_allocator::pointer             pointer;
+    typedef typename Key_allocator::const_pointer       const_pointer;
+    typedef typename Key_allocator::reference           reference;
+    typedef typename Key_allocator::const_reference     const_reference;
+    typedef typename Rep_type::const_iterator           iterator;
     typedef typename Rep_type::const_iterator           const_iterator;
-    typedef typename Rep_type::reverse_iterator         reverse_iterator;
+    typedef typename Rep_type::const_reverse_iterator   reverse_iterator;
     typedef typename Rep_type::const_reverse_iterator   const_reverse_iterator;
     typedef typename Rep_type::difference_type          difference_type;
 
     Set() : m_t() {}
     Set(const Compare& comp, const allocator_type& a = allocator_type())
-        : m_t(comp, Pair_allocator(a)) {}
+        : m_t(comp, Key_allocator(a)) {}
     Set(const Set& x) : m_t(x.m_t) {}
 
     template<typename InputIter>
@@ -98,7 +81,7 @@ public:
 
     template<typename InputIter>
     Set(InputIter first, InputIter last, const Compare& comp,
-        const allocator_type& a = allocator_type()) : m_t(comp, Pair_allocator(a))
+        const allocator_type& a = allocator_type()) : m_t(comp, Key_allocator(a))
     { m_t.m_insert_unique(first, last); }
 
     ~Set() {}
@@ -139,16 +122,12 @@ public:
     size_t max_size() const
     { return m_t.max_size(); }
 
-    Setped_type& operator[](const key_type& k)
-    {
-        iterator i = lower_bound(k);
-        if (i == end() || key_comp()(k, (*i).first))
-            i = insert(i, value_type(k, Setped_type()));
-        return (*i).second;
-    }
-
     std::pair<iterator, bool> insert(const value_type& x)
-    { return m_t.m_insert_unique(x); }
+    {
+        std::pair<typename Rep_type::iterator, bool> tmp = 
+            m_t.m_insert_unique(x);
+        return std::pair<iterator, bool>(tmp.first, tmp.second);
+    }
 
     iterator insert(iterator pos, const value_type& x)
     { return m_t.m_insert_unique(pos, x); }
@@ -176,7 +155,7 @@ public:
     { return m_t.key_comp(); }
 
     value_compare value_comp() const
-    { return value_compare(m_t.key_comp()); }
+    { return m_t.key_comp(); }
 
     iterator find(const key_type& x)
     { return m_t.find(x); }
@@ -205,44 +184,43 @@ public:
     std::pair<const_iterator, const_iterator> equal_range(const key_type& x) const
     { return m_t.equal_range(x); }
 
-    template<typename _Key, typename _Tp, typename _Compare, typename _Alloc>
-    friend bool operator==(const Set<_Key, _Tp, _Compare, _Alloc>& x,
-	    const Set<_Key, _Tp, _Compare, _Alloc>& y)
+    template<typename _Key, typename _Compare, typename _Alloc>
+    friend bool operator==(const Set<_Key, _Compare, _Alloc>& x,
+	    const Set<_Key,_Compare, _Alloc>& y)
     { return x.m_t == y.m_t; }
 
-    template<typename _Key, typename _Tp, typename _Compare, typename _Alloc>
-    friend bool operator<(const Set<_Key, _Tp, _Compare, _Alloc>& x,
-	    const Set<_Key, _Tp, _Compare, _Alloc>& y)
+    template<typename _Key, typename _Compare, typename _Alloc>
+    friend bool operator<(const Set<_Key,_Compare, _Alloc>& x,
+	    const Set<_Key,_Compare, _Alloc>& y)
     { return x.m_t < y.m_t; }
 
 private:
     Rep_type m_t;
 };
 
-template<typename _Key, typename _Tp, typename _Compare, typename _Alloc>
-inline bool operator!=(const Set<_Key, _Tp, _Compare, _Alloc>& x,
-    const Set<_Key, _Tp, _Compare, _Alloc>& y)
+template<typename _Key, typename _Compare, typename _Alloc>
+inline bool operator!=(const Set<_Key,_Compare, _Alloc>& x,
+    const Set<_Key,_Compare, _Alloc>& y)
 { return !(x.m_t == y.m_t); }
 
-template<typename _Key, typename _Tp, typename _Compare, typename _Alloc>
-inline bool operator>(const Set<_Key, _Tp, _Compare, _Alloc>& x,
-    const Set<_Key, _Tp, _Compare, _Alloc>& y)
+template<typename _Key, typename _Compare, typename _Alloc>
+inline bool operator>(const Set<_Key,_Compare, _Alloc>& x,
+    const Set<_Key,_Compare, _Alloc>& y)
 { return y < x; }
 
-template<typename _Key, typename _Tp, typename _Compare, typename _Alloc>
-inline bool operator<=(const Set<_Key, _Tp, _Compare, _Alloc>& x,
-    const Set<_Key, _Tp, _Compare, _Alloc>& y)
+template<typename _Key, typename _Compare, typename _Alloc>
+inline bool operator<=(const Set<_Key,_Compare, _Alloc>& x,
+    const Set<_Key,_Compare, _Alloc>& y)
 { return !(y < x); }
 
-template<typename _Key, typename _Tp, typename _Compare, typename _Alloc>
-inline bool operator>=(const Set<_Key, _Tp, _Compare, _Alloc>& x,
-    const Set<_Key, _Tp, _Compare, _Alloc>& y)
+template<typename _Key, typename _Compare, typename _Alloc>
+inline bool operator>=(const Set<_Key,_Compare, _Alloc>& x,
+    const Set<_Key,_Compare, _Alloc>& y)
 { return !(x < y); }
 
-template<typename Key, typename Tp, typename Compare, typename Alloc>
-inline void swap(Set<Key, Tp, Compare, Alloc>& x, Set<Key, Tp, Compare, Alloc>& y)
+template<typename Key, typename Compare, typename Alloc>
+inline void swap(Set<Key, Compare, Alloc>& x, Set<Key, Compare, Alloc>& y)
 { x.swap(y); }
-
 } // namespace ft
 
 #endif /* FT_SET_HPP */
