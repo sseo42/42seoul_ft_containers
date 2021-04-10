@@ -2,10 +2,9 @@
 # define FT_RBTREE_HPP
 
 # include "ft_library.hpp"
+# include "ft_pair.hpp"
 # include "ft_iter.hpp"
 # include <memory>
-# include <utility>
-# include <iostream> // tester
 
 namespace ft
 {
@@ -169,7 +168,7 @@ struct Rbtree_iterator
     typedef Tp&                                 reference;
     typedef Tp*                                 pointer;
     typedef std::bidirectional_iterator_tag     iterator_category;
-    typedef ptrdiff_t                           difference_type;
+    typedef long                                difference_type;
 
     Rbtree_iterator() : m_node() {}
 
@@ -214,7 +213,7 @@ struct Rbtree_const_iterator
     typedef const Tp*                           pointer;
     typedef Rbtree_iterator<Tp>                 iterator;
     typedef std::bidirectional_iterator_tag     iterator_category;
-    typedef ptrdiff_t                           difference_type;
+    typedef long                                difference_type;
 
     Rbtree_const_iterator() : m_node() {}
     Rbtree_const_iterator(Base_ptr x) : m_node(x) {}
@@ -554,7 +553,7 @@ public:
     typedef const value_type*                   const_pointer;
     typedef value_type&                         reference;
     typedef const value_type&                   const_reference;
-    typedef ptrdiff_t                           difference_type;
+    typedef long                                difference_type;
     typedef Rbtree_iterator<value_type>         iterator;
     typedef Rbtree_const_iterator<value_type>   const_iterator;
     typedef ft::ReverseIterator<iterator>       reverse_iterator;
@@ -660,9 +659,9 @@ public:
 
     // get the position for k, return <pos_to_insert, parent node>
     // if there is a node 'pos' with same k return <pos, 0>
-    std::pair<Base_ptr, Base_ptr> m_get_insert_unique_pos(const key_type& k)
+    ft::Pair<Base_ptr, Base_ptr> m_get_insert_unique_pos(const key_type& k)
     {
-        typedef std::pair<Base_ptr, Base_ptr> Res;
+        typedef ft::Pair<Base_ptr, Base_ptr>    Res;
         Link_type x = m_begin();
         Base_ptr y = m_end();
         bool comp = true;
@@ -686,9 +685,9 @@ public:
     }
 
     // get the position for k allowing same k
-    std::pair<Base_ptr, Base_ptr> m_get_insert_equal_pos(const key_type& k)
+    ft::Pair<Base_ptr, Base_ptr> m_get_insert_equal_pos(const key_type& k)
     {
-        typedef std::pair<Base_ptr, Base_ptr> Res;
+        typedef ft::Pair<Base_ptr, Base_ptr>    Res;
         Link_type x = m_begin();
         Base_ptr y = m_end();
         while (x != 0)
@@ -700,9 +699,9 @@ public:
     }
 
     // same as m_get_insert_unique_pos but use a hint 'position'
-    std::pair<Base_ptr, Base_ptr> m_get_insert_hint_unique_pos(const_iterator position, const key_type& k)
+    ft::Pair<Base_ptr, Base_ptr> m_get_insert_hint_unique_pos(const_iterator position, const key_type& k)
     {
-        typedef std::pair<Base_ptr, Base_ptr> Res;
+        typedef ft::Pair<Base_ptr, Base_ptr>    Res;
         iterator pos = position.m_const_cast();
         if (pos.m_node == m_end())
         {
@@ -755,9 +754,9 @@ public:
         }
     }
 
-    std::pair<Base_ptr, Base_ptr> m_get_insert_hint_equal_pos(const_iterator position, const key_type& k)
+    ft::Pair<Base_ptr, Base_ptr> m_get_insert_hint_equal_pos(const_iterator position, const key_type& k)
     {
-        typedef std::pair<Base_ptr, Base_ptr> Res;
+        typedef ft::Pair<Base_ptr, Base_ptr>    Res;
         iterator pos = position.m_const_cast();
         if (pos.m_node == m_end())
         {
@@ -804,10 +803,10 @@ public:
         }
     }
 
-    std::pair<iterator, bool> m_insert_unique(const value_type& v)
+    ft::Pair<iterator, bool> m_insert_unique(const value_type& v)
     {
-        typedef std::pair<iterator, bool> Res;
-        std::pair<Base_ptr, Base_ptr> res = m_get_insert_unique_pos(KeyOfValue()(v));
+        typedef ft::Pair<iterator, bool>    Res;
+        ft::Pair<Base_ptr, Base_ptr> res = m_get_insert_unique_pos(KeyOfValue()(v));
         if (res.second)
         {
             Alloc_node an(*this);
@@ -827,7 +826,7 @@ public:
     template<typename NodeGen>
     iterator m_insert_unique(const_iterator pos, const value_type& x, NodeGen& node_gen)
     {
-        std::pair<Base_ptr, Base_ptr> res = m_get_insert_hint_unique_pos(pos, KeyOfValue()(x));
+        ft::Pair<Base_ptr, Base_ptr> res = m_get_insert_hint_unique_pos(pos, KeyOfValue()(x));
         if (res.second)
             return m_insert(res.first, res.second, x, node_gen);
         return iterator(res.first);
@@ -841,7 +840,7 @@ public:
 
     iterator m_insert_equal(const value_type& x)
     {
-        std::pair<Base_ptr, Base_ptr> res = m_get_insert_equal_pos(KeyOfValue()(x));
+        ft::Pair<Base_ptr, Base_ptr> res = m_get_insert_equal_pos(KeyOfValue()(x));
         Alloc_node an(*this);
         return m_insert(res.first, res.second, x, an);
     }
@@ -857,7 +856,7 @@ public:
     template<typename NodeGen>
     iterator m_insert_equal(const_iterator pos, const value_type& x, NodeGen& node_gen)
     {
-        std::pair<Base_ptr, Base_ptr> res = m_get_insert_hint_equal_pos(pos, KeyOfValue()(x));
+        ft::Pair<Base_ptr, Base_ptr> res = m_get_insert_hint_equal_pos(pos, KeyOfValue()(x));
         if (res.second)
             return m_insert(res.first, res.second, x, node_gen);
         return m_insert_equal_lower(x);
@@ -893,7 +892,7 @@ public:
 
     size_t erase(const key_type& x)
     {
-        std::pair<iterator, iterator> p = equal_range(x);
+        ft::Pair<iterator, iterator> p = equal_range(x);
         const size_t old_size = size();
         m_rebalance_erase(p.first, p.second);
         return old_size - size();
@@ -925,7 +924,7 @@ public:
 
     size_t count(const key_type& k) const
     {
-        std::pair<const_iterator, const_iterator> p = equal_range(k);
+        ft::Pair<const_iterator, const_iterator> p = equal_range(k);
         return std::distance(p.first, p.second);
     }
 
@@ -941,7 +940,7 @@ public:
     const_iterator upper_bound(const key_type& k) const
     { return m_upper_bound(m_begin(), m_end(), k); }
 
-    std::pair<iterator, iterator> equal_range(const key_type& k)
+    ft::Pair<iterator, iterator> equal_range(const key_type& k)
     {
         Link_type x = m_begin();
         Base_ptr y = m_end();
@@ -962,14 +961,14 @@ public:
                 Base_ptr yu(y);
                 y = x, x = s_left(x);
                 xu = s_right(xu);
-                return std::pair<iterator, iterator>(
+                return ft::Pair<iterator, iterator>(
                     m_lower_bound(x, y, k), m_upper_bound(xu, yu, k));
             }
         }
-        return std::pair<iterator, iterator>(iterator(y), iterator(y));
+        return ft::Pair<iterator, iterator>(iterator(y), iterator(y));
     }
 
-    std::pair<const_iterator, const_iterator> equal_range(const key_type& k) const
+    ft::Pair<const_iterator, const_iterator> equal_range(const key_type& k) const
     {
         Const_Link_type x = m_begin();
         Const_Base_ptr y = m_end();
@@ -990,11 +989,11 @@ public:
                 Const_Base_ptr yu(y);
                 y = x, x = s_left(x);
                 xu = s_right(xu);
-                return std::pair<const_iterator, const_iterator>(
+                return ft::Pair<const_iterator, const_iterator>(
                     m_lower_bound(x, y, k), m_upper_bound(xu, yu, k));
             }
         }
-        return std::pair<const_iterator, const_iterator>(
+        return ft::Pair<const_iterator, const_iterator>(
             const_iterator(y), const_iterator(y));
     }
 
@@ -1315,7 +1314,6 @@ private:
 
     void m_rebalance_erase(const_iterator first, const_iterator last)
     {
-        Base_ptr tmp = m_end();
         if (first == begin() && last == end())
             clear();
         else

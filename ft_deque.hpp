@@ -3,7 +3,6 @@
 
 # include "ft_iter.hpp"
 # include <memory>
-# include <iostream>
 
 /**
  * member functions
@@ -60,7 +59,7 @@ struct DequeIterator
     typedef Tp                                      value_type;
     typedef Ptr                                     pointer;
     typedef Ref                                     reference;
-    typedef ptrdiff_t                               difference_type;
+    typedef long                                    difference_type;
 
     static size_t s_buf_size()
     { return ft::deque_buf_size(sizeof(Tp)); }
@@ -255,7 +254,7 @@ inline typename DequeIterator<Tp, RefL, PtrL>::difference_type
 
 template<typename Tp, typename Ref, typename Ptr>
 inline typename DequeIterator<Tp, Ref, Ptr>::difference_type
-    operator+(ptrdiff_t n, const DequeIterator<Tp, Ref, Ptr>& x)
+    operator+(long n, const DequeIterator<Tp, Ref, Ptr>& x)
 { return x + n; }
 
 template<typename Tp, typename Alloc>
@@ -416,7 +415,7 @@ public:
     typedef typename Base::const_iterator                   const_iterator;
     typedef typename ft::ReverseIterator<iterator>          reverse_iterator;
     typedef typename ft::ReverseIterator<const_iterator>    const_reverse_iterator;
-    typedef ptrdiff_t                                       difference_type;
+    typedef long                                            difference_type;
 
     Deque() : Base() {}
     Deque(const Alloc_type& a) : Base(a, 0) {}

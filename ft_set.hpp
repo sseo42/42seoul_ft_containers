@@ -1,11 +1,9 @@
 #ifndef FT_SET_HPP
 # define FT_SET_HPP
 
-# include "ft_rbtree.hpp"
+# include "ft_pair.hpp"
 # include "ft_function.hpp"
-# include <memory>
-# include <functional>
-# include <utility>
+# include "ft_rbtree.hpp"
 
 /**
  * menber functions
@@ -122,11 +120,11 @@ public:
     size_t max_size() const
     { return m_t.max_size(); }
 
-    std::pair<iterator, bool> insert(const value_type& x)
+    ft::Pair<iterator, bool> insert(const value_type& x)
     {
-        std::pair<typename Rep_type::iterator, bool> tmp = 
+        ft::Pair<typename Rep_type::iterator, bool> tmp = 
             m_t.m_insert_unique(x);
-        return std::pair<iterator, bool>(tmp.first, tmp.second);
+        return ft::Pair<iterator, bool>(tmp.first, tmp.second);
     }
 
     iterator insert(iterator pos, const value_type& x)
@@ -178,10 +176,10 @@ public:
     const_iterator upper_bound(const key_type& x) const
     { return m_t.upper_bound(x); }
 
-    std::pair<iterator, iterator> equal_range(const key_type& x)
+    ft::Pair<iterator, iterator> equal_range(const key_type& x)
     { return m_t.equal_range(x); }
 
-    std::pair<const_iterator, const_iterator> equal_range(const key_type& x) const
+    ft::Pair<const_iterator, const_iterator> equal_range(const key_type& x) const
     { return m_t.equal_range(x); }
 
     template<typename _Key, typename _Compare, typename _Alloc>

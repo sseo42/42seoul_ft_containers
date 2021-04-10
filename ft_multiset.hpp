@@ -1,11 +1,9 @@
 #ifndef FT_MULTISET_HPP
 # define FT_MULTISET_HPP
 
-# include "ft_rbtree.hpp"
+# include "ft_pair.hpp"
 # include "ft_function.hpp"
-# include <memory>
-# include <functional>
-# include <utility>
+# include "ft_rbtree.hpp"
 
 /**
  * menber functions
@@ -174,10 +172,10 @@ public:
     const_iterator upper_bound(const key_type& x) const
     { return m_t.upper_bound(x); }
 
-    std::pair<iterator, iterator> equal_range(const key_type& x)
+    ft::Pair<iterator, iterator> equal_range(const key_type& x)
     { return m_t.equal_range(x); }
 
-    std::pair<const_iterator, const_iterator> equal_range(const key_type& x) const
+    ft::Pair<const_iterator, const_iterator> equal_range(const key_type& x) const
     { return m_t.equal_range(x); }
 
     template<typename _Key, typename _Compare, typename _Alloc>

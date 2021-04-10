@@ -2,7 +2,6 @@
 # define FT_FUNCTION_HPP
 
 # include <functional>
-# include <iostream>
 
 namespace ft
 {

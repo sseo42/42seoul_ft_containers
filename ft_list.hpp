@@ -2,8 +2,8 @@
 # define FT_LIST_HPP
 
 # include "ft_library.hpp"
+# include "ft_iter.hpp"
 # include <memory>
-# include <iostream>    // for test
 
 /**
  * member functions
@@ -134,7 +134,7 @@ class ListIterator
 public:
     typedef ListIterator<Tp>                Self;
     typedef ListNode<Tp>                    Node;
-    typedef ptrdiff_t                       dirrerence_type;
+    typedef long                            dirrerence_type;
     typedef std::bidirectional_iterator_tag interator_category;
     typedef Tp                              value_type;
     typedef Tp*                             pointer;
@@ -180,7 +180,7 @@ public:
     typedef ListConstIterator<Tp>           Self;
     typedef ListNode<Tp>                    Node;
     typedef ListIterator<Tp>                iterator;
-    typedef ptrdiff_t                       dirrerence_type;
+    typedef long                            dirrerence_type;
     typedef std::bidirectional_iterator_tag interator_category;
     typedef Tp                              value_type;
     typedef Tp*                             pointer;

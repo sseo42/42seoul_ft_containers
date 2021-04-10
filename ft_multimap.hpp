@@ -1,11 +1,9 @@
 #ifndef FT_MULTIMAP_HPP
 # define FT_MULTIMAP_HPP
 
-# include "ft_rbtree.hpp"
+# include "ft_pair.hpp"
 # include "ft_function.hpp"
-# include <memory>
-# include <functional>
-# include <utility>
+# include "ft_rbtree.hpp"
 
 /**
  * menber functions
@@ -46,13 +44,13 @@ namespace ft
 {
 
 template<typename Key, typename Tp, typename Compare = std::less<Key>,
-    typename Alloc = std::allocator<std::pair<const Key, Tp> > >
+    typename Alloc = std::allocator<ft::Pair<const Key, Tp> > >
 class Multimap
 {
 public:
     typedef Key                                         key_type;
     typedef Tp                                          mapped_type;
-    typedef std::pair<const Key, Tp>                    value_type;
+    typedef ft::Pair<const Key, Tp>                     value_type;
     typedef Compare                                     key_compare;
     typedef Alloc                                       allocator_type;
 
@@ -191,10 +189,10 @@ public:
     const_iterator upper_bound(const key_type& x) const
     { return m_t.upper_bound(x); }
 
-    std::pair<iterator, iterator> equal_range(const key_type& x)
+    ft::Pair<iterator, iterator> equal_range(const key_type& x)
     { return m_t.equal_range(x); }
 
-    std::pair<const_iterator, const_iterator> equal_range(const key_type& x) const
+    ft::Pair<const_iterator, const_iterator> equal_range(const key_type& x) const
     { return m_t.equal_range(x); }
 
     template<typename _Key, typename _Tp, typename _Compare, typename _Alloc>

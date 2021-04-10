@@ -2,7 +2,6 @@
 # define FT_LIBRARY_HPP
 
 # include <stdlib.h>
-# include <iostream>
 
 namespace ft
 {
