@@ -453,7 +453,6 @@ static Rbtree_node_base* rbtree_rebalance_for_erase(Rbtree_node_base* const z, R
     }
     if (y->m_color != Red)
     {
-        
         while (x != root && (x == 0 || x->m_color == Black))
         {
             if (x == x_parent->m_left)
@@ -534,9 +533,9 @@ static Rbtree_node_base* rbtree_rebalance_for_erase(Rbtree_node_base* const z, R
                     break ;
                 }
             }
-            if (x)
-                x->m_color = Black;
         }
+        if (x)
+            x->m_color = Black;
     }
     return y;
 }
