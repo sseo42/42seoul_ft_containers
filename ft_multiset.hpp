@@ -158,7 +158,7 @@ public:
     { return m_t.find(x); }
 
     size_t count(const key_type& x) const
-    { return m_t.count(); }
+    { return m_t.count(x); }
 
     iterator lower_bound(const key_type& x)
     { return m_t.lower_bound(x); }

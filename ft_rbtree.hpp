@@ -121,7 +121,7 @@ static Rbtree_node_base* rbtree_increment(Rbtree_node_base* x)
     }
 }
 
-static const Rbtree_node_base* rbtree_increment(const Rbtree_node_base* x)
+const Rbtree_node_base* rbtree_increment(const Rbtree_node_base* x)
 {
     return rbtree_increment(const_cast<Rbtree_node_base*>(x));
 }
@@ -151,7 +151,7 @@ static Rbtree_node_base* rbtree_decrement(Rbtree_node_base* x)
     }
 }
 
-static const Rbtree_node_base* rbtree_decrement(const Rbtree_node_base* x)
+const Rbtree_node_base* rbtree_decrement(const Rbtree_node_base* x)
 {
     return rbtree_decrement(const_cast<Rbtree_node_base*>(x));
 }
@@ -299,7 +299,7 @@ static void rotate_left(Rbtree_node_base* x, Rbtree_node_base*& root)
 
 // insert x into p's (insert_left) node keeping balance
 // and update header's left, right and header's parent(root)
-static void rbtree_insert_and_rebalance(const bool insert_left, Rbtree_node_base* x,
+static void local_rbtree_insert_and_rebalance(const bool insert_left, Rbtree_node_base* x,
     Rbtree_node_base* p, Rbtree_node_base& header)
 {
     Rbtree_node_base*& root = header.m_parent;
@@ -374,8 +374,12 @@ static void rbtree_insert_and_rebalance(const bool insert_left, Rbtree_node_base
     root->m_color = Black;
 }
 
+void rbtree_insert_and_rebalance(const bool insert_left, Rbtree_node_base* x,
+    Rbtree_node_base* p, Rbtree_node_base& header)
+{ return local_rbtree_insert_and_rebalance(insert_left, x, p, header); }
+
 // erase node keeping balance
-static Rbtree_node_base* rbtree_rebalance_for_erase(Rbtree_node_base* const z, Rbtree_node_base& header)
+static Rbtree_node_base* local_rbtree_rebalance_for_erase(Rbtree_node_base* const z, Rbtree_node_base& header)
 {
     Rbtree_node_base*& root = header.m_parent;
     Rbtree_node_base*& leftmost = header.m_left;
@@ -538,6 +542,9 @@ static Rbtree_node_base* rbtree_rebalance_for_erase(Rbtree_node_base* const z, R
     }
     return y;
 }
+
+Rbtree_node_base* rbtree_rebalance_for_erase(Rbtree_node_base* const z, Rbtree_node_base& header)
+{ return local_rbtree_rebalance_for_erase(z, header); }
 
 template<typename Key, typename Val, typename KeyOfValue,
     typename Compare, typename Alloc = std::allocator<Val> >

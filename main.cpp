@@ -1,9 +1,15 @@
 #include "ft_vector.hpp"
 #include "ft_list.hpp"
-#include "ft_deque.hpp"
 #include "ft_stack.hpp"
 #include "ft_queue.hpp"
 #include "ft_map.hpp"
+#include "ft_deque.hpp"
+#include "ft_multimap.hpp"
+#include "ft_set.hpp"
+#include "ft_multiset.hpp"
+
+#include "ft_tester.hpp"
+
 #include <iostream>
 #include <vector>
 #include <list>
@@ -243,169 +249,183 @@ int     main(void)
 
 
 
-    std::cout << "===============================Map=============================\n";
+    // std::cout << "===============================Map=============================\n";
 
-    ft::Map<int, int> test_map;
-    std::cout << "-------------------map empty ---------------------\n";
-    std::cout << "test map: is empty ? -> " << test_map.empty() << std::endl;
-    std::cout << std::endl;
+    // ft::Map<int, int> test_map;
+    // std::cout << "-------------------map empty ---------------------\n";
+    // std::cout << "test map: is empty ? -> " << test_map.empty() << std::endl;
+    // std::cout << std::endl;
 
-    std::cout << "-------------------map insert --------------------\n";
-    test_map.insert({10, 4});
-    test_map.insert({1, 2});
-    test_map.insert({5, 3});
-    for (ft::Map<int, int>::iterator it = test_map.begin(); it != test_map.end(); ++it)
-    {
-        std::cout << "test map: " << it->first << " " << it->second << std::endl;
-    }
-    std::cout << std::endl;
+    // std::cout << "-------------------map insert --------------------\n";
+    // test_map.insert(ft::make_pair(10, 4));
+    // test_map.insert(ft::make_pair(1, 2));
+    // test_map.insert(ft::make_pair(5, 3));
+    // for (ft::Map<int, int>::iterator it = test_map.begin(); it != test_map.end(); ++it)
+    // {
+    //     std::cout << "test map: " << it->first << " " << it->second << std::endl;
+    // }
+    // std::cout << std::endl;
 
-    std::cout << "-------------------map init with iter---------------------\n";
+    // std::cout << "-------------------map init with iter---------------------\n";
 
-    ft::Map<int, int> test_map2(test_map.begin(), test_map.end());
-    for (ft::Map<int, int>::iterator it = test_map2.begin(); it != test_map2.end(); ++it)
-    {
-        std::cout << "test map: " << it->first << " " << it->second << std::endl;
-    }
-    std::cout << std::endl;
+    // ft::Map<int, int> test_map2(test_map.begin(), test_map.end());
+    // for (ft::Map<int, int>::iterator it = test_map2.begin(); it != test_map2.end(); ++it)
+    // {
+    //     std::cout << "test map: " << it->first << " " << it->second << std::endl;
+    // }
+    // std::cout << std::endl;
 
-    std::cout << "-----------------------map size--------------------------\n";
-    std::cout << "test map size: " << test_map.size() << std::endl;
-    std::cout << std::endl;
+    // std::cout << "-----------------------map size--------------------------\n";
+    // std::cout << "test map size: " << test_map.size() << std::endl;
+    // std::cout << std::endl;
 
-    std::cout << "-----------------------map max_size----------------------\n";
-    std::cout << "test map max_size: " << test_map.max_size() << std::endl;
-    std::cout << std::endl;
+    // std::cout << "-----------------------map max_size----------------------\n";
+    // std::cout << "test map max_size: " << test_map.max_size() << std::endl;
+    // std::cout << std::endl;
 
-    std::cout << "-----------------------map operator[]--------------------\n";
-    std::cout << "test map[5]: " << test_map[5] << std::endl;
-    test_map[20] = 1;
-    std::cout << "test map after [20] = 1\n";
-    for (ft::Map<int, int>::iterator it = test_map.begin(); it != test_map.end(); ++it)
-    {
-        std::cout << "test map: " << it->first << " " << it->second << std::endl;
-    }
-    std::cout << std::endl;
+    // std::cout << "-----------------------map operator[]--------------------\n";
+    // std::cout << "test map[5]: " << test_map[5] << std::endl;
+    // test_map[20] = 1;
+    // std::cout << "test map after [20] = 1\n";
+    // for (ft::Map<int, int>::iterator it = test_map.begin(); it != test_map.end(); ++it)
+    // {
+    //     std::cout << "test map: " << it->first << " " << it->second << std::endl;
+    // }
+    // std::cout << std::endl;
 
-    std::cout << "-----------------------map erase--------------------\n";
+    // std::cout << "-----------------------map erase--------------------\n";
     
-    test_map.erase(10);
-    std::cout << "after erase 10\n";
-    for (ft::Map<int, int>::iterator it = test_map.begin(); it != test_map.end(); ++it)
-    {
-        std::cout << "test map: " << it->first << " " << it->second << std::endl;
-    }
-    std::cout << std::endl;
+    // test_map.erase(10);
+    // std::cout << "after erase 10\n";
+    // for (ft::Map<int, int>::iterator it = test_map.begin(); it != test_map.end(); ++it)
+    // {
+    //     std::cout << "test map: " << it->first << " " << it->second << std::endl;
+    // }
+    // std::cout << std::endl;
 
-    std::cout << "after erase begin to end - 1\n";
-    ft::Map<int, int>::iterator map_it = test_map.end();
-    test_map.erase(test_map.begin(), --map_it);
-    for (ft::Map<int, int>::iterator it = test_map.begin(); it != test_map.end(); ++it)
-    {
-        std::cout << "test map: " << it->first << " " << it->second << std::endl;
-    }
-    std::cout << std::endl;
+    // std::cout << "after erase begin to end - 1\n";
+    // ft::Map<int, int>::iterator map_it = test_map.end();
+    // test_map.erase(test_map.begin(), --map_it);
+    // for (ft::Map<int, int>::iterator it = test_map.begin(); it != test_map.end(); ++it)
+    // {
+    //     std::cout << "test map: " << it->first << " " << it->second << std::endl;
+    // }
+    // std::cout << std::endl;
 
-    std::cout << "-----------------------map swap --------------------\n";
-    for (ft::Map<int, int>::iterator it = test_map.begin(); it != test_map.end(); ++it)
-    {
-        std::cout << "test map: " << it->first << " " << it->second << std::endl;
-    }
-    std::cout << std::endl;
-    for (ft::Map<int, int>::iterator it = test_map2.begin(); it != test_map2.end(); ++it)
-    {
-        std::cout << "test map2: " << it->first << " " << it->second << std::endl;
-    }
-    std::cout << std::endl;
+    // std::cout << "-----------------------map swap --------------------\n";
+    // for (ft::Map<int, int>::iterator it = test_map.begin(); it != test_map.end(); ++it)
+    // {
+    //     std::cout << "test map: " << it->first << " " << it->second << std::endl;
+    // }
+    // std::cout << std::endl;
+    // for (ft::Map<int, int>::iterator it = test_map2.begin(); it != test_map2.end(); ++it)
+    // {
+    //     std::cout << "test map2: " << it->first << " " << it->second << std::endl;
+    // }
+    // std::cout << std::endl;
 
-    ft::swap(test_map, test_map2);
-    std::cout << "****after swap****\n";
-    for (ft::Map<int, int>::iterator it = test_map.begin(); it != test_map.end(); ++it)
-    {
-        std::cout << "test map: " << it->first << " " << it->second << std::endl;
-    }
-    std::cout << std::endl;
-    for (ft::Map<int, int>::iterator it = test_map2.begin(); it != test_map2.end(); ++it)
-    {
-        std::cout << "test map2: " << it->first << " " << it->second << std::endl;
-    }
-    std::cout << std::endl;
+    // ft::swap(test_map, test_map2);
+    // std::cout << "****after swap****\n";
+    // for (ft::Map<int, int>::iterator it = test_map.begin(); it != test_map.end(); ++it)
+    // {
+    //     std::cout << "test map: " << it->first << " " << it->second << std::endl;
+    // }
+    // std::cout << std::endl;
+    // for (ft::Map<int, int>::iterator it = test_map2.begin(); it != test_map2.end(); ++it)
+    // {
+    //     std::cout << "test map2: " << it->first << " " << it->second << std::endl;
+    // }
+    // std::cout << std::endl;
 
-    std::cout << "-----------------------map clear--------------------\n";
-    for (ft::Map<int, int>::iterator it = test_map2.begin(); it != test_map2.end(); ++it)
-    {
-        std::cout << "test map2: " << it->first << " " << it->second << std::endl;
-    }
-    std::cout << std::endl;
-    std::cout << "****after clear test map2****\n";
-    test_map2.clear();
-    for (ft::Map<int, int>::iterator it = test_map2.begin(); it != test_map2.end(); ++it)
-    {
-        std::cout << "test map2: " << it->first << " " << it->second << std::endl;
-    }
-    std::cout << std::endl;
+    // std::cout << "-----------------------map clear--------------------\n";
+    // for (ft::Map<int, int>::iterator it = test_map2.begin(); it != test_map2.end(); ++it)
+    // {
+    //     std::cout << "test map2: " << it->first << " " << it->second << std::endl;
+    // }
+    // std::cout << std::endl;
+    // std::cout << "****after clear test map2****\n";
+    // test_map2.clear();
+    // for (ft::Map<int, int>::iterator it = test_map2.begin(); it != test_map2.end(); ++it)
+    // {
+    //     std::cout << "test map2: " << it->first << " " << it->second << std::endl;
+    // }
+    // std::cout << std::endl;
 
-    std::cout << "-----------------------map key_comp--------------------\n";
-    ft::Map<int, std::string> test_map3;
-    test_map3.insert(std::make_pair(1, "hello"));
-    test_map3.insert(std::make_pair(2, "allo"));
+    // std::cout << "-----------------------map key_comp--------------------\n";
+    // ft::Map<int, std::string> test_map3;
+    // test_map3.insert(ft::make_pair(1, "hello"));
+    // test_map3.insert(ft::make_pair(2, "allo"));
 
-    std::cout << "target map\n";
-    for (ft::Map<int, std::string>::iterator it = test_map3.begin(); it != test_map3.end(); ++it)
-    {
-        std::cout << "test map3: " << it->first << " " << it->second << std::endl;
-    }
-    std::cout << std::endl;
+    // std::cout << "target map\n";
+    // for (ft::Map<int, std::string>::iterator it = test_map3.begin(); it != test_map3.end(); ++it)
+    // {
+    //     std::cout << "test map3: " << it->first << " " << it->second << std::endl;
+    // }
+    // std::cout << std::endl;
 
-    ft::Map<int, std::string>::key_compare k_comp = test_map3.key_comp();
-    std::cout << "key compare between begin and begin + 1\n";
-    std::cout << k_comp(test_map3.begin()->first, (++test_map3.begin())->first) << std::endl;
+    // ft::Map<int, std::string>::key_compare k_comp = test_map3.key_comp();
+    // std::cout << "key compare between begin and begin + 1\n";
+    // std::cout << k_comp(test_map3.begin()->first, (++test_map3.begin())->first) << std::endl;
 
-    std::cout << "-----------------------map value_comp------------------\n";
-    ft::Map<int, std::string>::value_compare v_comp = test_map3.value_comp();
-    std::cout << "value compare between begin and begin + 1\n";
-    std::cout << v_comp(*test_map3.begin(), *(++test_map3.begin())) << std::endl;
+    // std::cout << "-----------------------map value_comp------------------\n";
+    // ft::Map<int, std::string>::value_compare v_comp = test_map3.value_comp();
+    // std::cout << "value compare between begin and begin + 1\n";
+    // std::cout << v_comp(*test_map3.begin(), *(++test_map3.begin())) << std::endl;
 
-    std::cout << "-------------------------map find ---------------------\n";
-    std::cout << "find a value of key 1\n";
-    std::cout << test_map3.find(1)->second << std::endl;
+    // std::cout << "-------------------------map find ---------------------\n";
+    // std::cout << "find a value of key 1\n";
+    // std::cout << test_map3.find(1)->second << std::endl;
 
-    std::cout << "-------------------------map count---------------------\n";
-    std::cout << "count a key 1\n";
-    std::cout << test_map3.count(1) << std::endl;
-    std::cout << "count a key 3\n";
-    std::cout << test_map3.count(3) << std::endl;
+    // std::cout << "-------------------------map count---------------------\n";
+    // std::cout << "count a key 1\n";
+    // std::cout << test_map3.count(1) << std::endl;
+    // std::cout << "count a key 3\n";
+    // std::cout << test_map3.count(3) << std::endl;
 
-    std::cout << "-----------------------map lower bound-----------------\n";
-    std::cout << "lower bound of 5 -> " << test_map.lower_bound(5)->first << std::endl;
-    std::cout << std::endl;
+    // std::cout << "-----------------------map lower bound-----------------\n";
+    // std::cout << "lower bound of 5 -> " << test_map.lower_bound(5)->first << std::endl;
+    // std::cout << std::endl;
 
-    std::cout << "-----------------------map upper bound-----------------\n";
-    std::cout << "upper bound of 5 -> " << test_map.upper_bound(5)->first << std::endl;
-    std::cout << std::endl;
+    // std::cout << "-----------------------map upper bound-----------------\n";
+    // std::cout << "upper bound of 5 -> " << test_map.upper_bound(5)->first << std::endl;
+    // std::cout << std::endl;
 
-    std::cout << "-----------------------map equal range-----------------\n";
-    std::cout << "equal range of key 5 -> " << test_map.equal_range(5).first->first << " to " <<
-        test_map.equal_range(5).second->first << std::endl;
-    std::cout << std::endl;
+    // std::cout << "-----------------------map equal range-----------------\n";
+    // std::cout << "equal range of key 5 -> " << test_map.equal_range(5).first->first << " to " <<
+    //     test_map.equal_range(5).second->first << std::endl;
+    // std::cout << std::endl;
 
-    std::cout << "-------------------------map comparision---------------------\n";
-    test_map2 = test_map;
-    test_map2.erase(10);
-    for (ft::Map<int, int>::iterator it = test_map.begin(); it != test_map.end(); ++it)
-    {
-        std::cout << "test map: " << it->first << " " << it->second << std::endl;
-    }
-    std::cout << std::endl;
-    for (ft::Map<int, int>::iterator it = test_map2.begin(); it != test_map2.end(); ++it)
-    {
-        std::cout << "test map2: " << it->first << " " << it->second << std::endl;
-    }
-    std::cout << std::endl;
+    // std::cout << "-------------------------map comparision---------------------\n";
+    // test_map2 = test_map;
+    // test_map2.erase(10);
+    // for (ft::Map<int, int>::iterator it = test_map.begin(); it != test_map.end(); ++it)
+    // {
+    //     std::cout << "test map: " << it->first << " " << it->second << std::endl;
+    // }
+    // std::cout << std::endl;
+    // for (ft::Map<int, int>::const_iterator it = test_map2.begin(); it != test_map2.end(); ++it)
+    // {
+    //     std::cout << "test map2: " << it->first << " " << it->second << std::endl;
+    // }
+    // std::cout << std::endl;
 
-    std::cout << "test_map == test_map2 ? -> " << (test_map == test_map2) << std::endl;
-    std::cout << "test_map > test_map2 ? -> " << (test_map > test_map2) << std::endl;
-    return 0;
+    // std::cout << "test_map == test_map2 ? -> " << (test_map == test_map2) << std::endl;
+    // std::cout << "test_map > test_map2 ? -> " << (test_map > test_map2) << std::endl;
+    // return 0;
 
-    std::set<int> test_set;
+
+    // ft::Multimap<int, std::string> test_multimap;
+    // ft::Set<int> test_set;
+    // ft::Multiset<int> test_mlset;
+
+    // std::map<int, int> mp;
+    // std::deque<int> test;
+
+    std::cout << "test mine\n";
+    Vector_tester<ft::Vector<int> > tester1;
+    tester1.test();
+
+    std::cout << "test origin\n";
+    Vector_tester<std::vector<int> > tester2;
+    tester2.test();
 }
