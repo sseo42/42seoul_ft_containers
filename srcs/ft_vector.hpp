@@ -504,7 +504,7 @@ protected:
     {
         if (max_size() - size() < n)
             throw std::length_error(s);
-        const size_t len = size() + std::max(size(), n);
+        const size_t len = size() + ft::max(size(), n);
         return ((len < size() || len > max_size()) ? max_size() : len);
     }
 };

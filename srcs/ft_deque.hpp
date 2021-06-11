@@ -347,7 +347,7 @@ protected:
     {
         const size_t num_nodes = num_elems / deque_buf_size(sizeof(Tp)) + 1;
 
-        this->m_impl.m_map_size = std::max(
+        this->m_impl.m_map_size = ft::max(
             (size_t)s_initial_map_size, size_t(num_nodes + 2));
         this->m_impl.m_map = m_allocate_map(this->m_impl.m_map_size);
 
@@ -1216,7 +1216,7 @@ protected:
         else
         {
             size_t new_map_size = this->m_impl.m_map_size
-                + std::max(this->m_impl.m_map_size, nodes_to_add) + 2;
+                + ft::max(this->m_impl.m_map_size, nodes_to_add) + 2;
             Map_pointer new_map = this->Base::m_allocate_map(new_map_size);
             new_nstart = new_map + (new_map_size - new_num_nodes) / 2
                 + (add_at_front ? nodes_to_add : 0);
@@ -1233,7 +1233,7 @@ protected:
 
 template<typename Tp, typename Alloc>
 inline bool operator==(const Deque<Tp, Alloc>& x, const Deque<Tp, Alloc>& y)
-{ return (x.size() == y.size() && std::equal(x.begin(), x.end(), y.begin())); }
+{ return (x.size() == y.size() && ft::equal(x.begin(), x.end(), y.begin())); }
 
 template<typename Tp, typename Alloc>
 inline bool operator!=(const Deque<Tp, Alloc>& x, const Deque<Tp, Alloc>& y)
@@ -1241,7 +1241,7 @@ inline bool operator!=(const Deque<Tp, Alloc>& x, const Deque<Tp, Alloc>& y)
 
 template<typename Tp, typename Alloc>
 inline bool operator<(const Deque<Tp, Alloc>& x, const Deque<Tp, Alloc>& y)
-{ return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end()); }
+{ return ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end()); }
 
 template<typename Tp, typename Alloc>
 inline bool operator>(const Deque<Tp, Alloc>& x, const Deque<Tp, Alloc>& y)

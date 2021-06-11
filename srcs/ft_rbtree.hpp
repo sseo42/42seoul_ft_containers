@@ -1381,13 +1381,13 @@ template<typename Key, typename Val, typename KeyOfValue,
     typename Compare, typename Alloc>
 inline bool operator==(const Rbtree<Key, Val, KeyOfValue, Compare, Alloc>& x,
     const Rbtree<Key, Val, KeyOfValue, Compare, Alloc>& y)
-{ return (x.size() == y.size() && std::equal(x.begin(), x.end(), y.begin())); }
+{ return (x.size() == y.size() && ft::equal(x.begin(), x.end(), y.begin())); }
 
 template<typename Key, typename Val, typename KeyOfValue,
     typename Compare, typename Alloc>
 inline bool operator<(const Rbtree<Key, Val, KeyOfValue, Compare, Alloc>& x,
     const Rbtree<Key, Val, KeyOfValue, Compare, Alloc>& y)
-{ return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end()); }
+{ return ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end()); }
 
 template<typename Key, typename Val, typename KeyOfValue,
     typename Compare, typename Alloc>

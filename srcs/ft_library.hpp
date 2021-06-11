@@ -55,6 +55,39 @@ void destroy(ForwardIter first, ForwardIter last, Alloc& alloc)
     }
 }
 
+template<typename T>
+const T& max(const T& a, const T& b)
+{
+	return (a<b) ? b : a;
+}
+
+template<typename InputIterator1, typename InputIterator2>
+bool equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2)
+{
+	while (first1 != last1)
+	{
+		if (*first1 != *first2)
+			return false;
+		++first1; ++first2;
+	}
+	return true;
+}
+
+template<typename InputIterator1, typename InputIterator2>
+bool lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
+		InputIterator2 first2, InputIterator2 last2)
+{
+	while (first1 != last1)
+	{
+		if (first2 == last2 || *first1 > *first2)
+			return false;
+		else if (*first1 < *first2)
+			return true;
+		++first1; ++first2;
+	}
+	return (first2 != last2);
+}
+
 template<typename ForwardIt, typename T>
 void fill(ForwardIt first, ForwardIt last, const T& value)
 {
