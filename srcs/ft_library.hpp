@@ -19,6 +19,7 @@ struct FalseType {};
 
 template<bool, typename T = void>
 struct enable_if {};
+
 template<typename T>
 struct enable_if<true, T> { typedef T type; };
 
@@ -41,6 +42,7 @@ struct addressof_impl
         return v;
     }
 };
+
 template<typename T>
 T* addressof(T& v) { return ft::addressof_impl<T>::f(v, 0); }
 
@@ -52,6 +54,23 @@ void destroy(ForwardIter first, ForwardIter last, Alloc& alloc)
         alloc.destroy(ft::addressof(*first));
     }
 }
+
+template<typename ForwardIt, typename T>
+void fill(ForwardIt first, ForwardIt last, const T& value)
+{
+    for (; first != last; ++first)
+        *first = value;
+}
+
+template<class OutputIt, class Size, class T>
+OutputIt fill_n(OutputIt first, Size count, const T& value)
+{
+    for (Size i = 0; i < count; i++) {
+        *first++ = value;
+    }
+    return first;
+}
+
 } // namespace ft
 
 #endif /*FT_LIBRARY_HPP */

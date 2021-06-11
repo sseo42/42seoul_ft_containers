@@ -2,6 +2,7 @@
 # define FT_DEQUE_HPP
 
 # include "ft_iter.hpp"
+# include "ft_library.hpp"
 # include <memory>
 
 /**
@@ -733,13 +734,13 @@ protected:
     {
         if (n > size())
         {
-            std::fill(begin(), end(), x);
+            ft::fill(begin(), end(), x);
             m_fill_insert(end(), n - size(), x);
         }
         else
         {
             m_erase_at_end(begin() + difference_type(n));
-            std::fill(begin(), end(), x);
+            ft::fill(begin(), end(), x);
         }
     }
 
@@ -787,7 +788,7 @@ protected:
                     std::uninitialized_copy(this->m_impl.m_start, start_n, new_start);
                     this->m_impl.m_start = new_start;
                     std::copy(start_n, pos, old_start); //check memory leak
-                    std::fill(pos - difference_type(n), pos, x_copy);
+                    ft::fill(pos - difference_type(n), pos, x_copy);
                 }
                 else
                 {
@@ -802,7 +803,7 @@ protected:
                         throw ;
                     }
                     this->m_impl.m_start = new_start;
-                    std::fill(old_start, pos, x_copy);
+                    ft::fill(old_start, pos, x_copy);
                 }
             }
             catch(...)
@@ -825,7 +826,7 @@ protected:
                     std::uninitialized_copy(finish_n, this->m_impl.m_finish, this->m_impl.m_finish);
                     this->m_impl.m_finish = new_finish;
                     std::copy_backward(pos, finish_n, old_finish); //check 3rd argument
-                    std::fill(pos, pos + difference_type(n), x_copy);
+                    ft::fill(pos, pos + difference_type(n), x_copy);
                 }
                 else
                 {
@@ -840,7 +841,7 @@ protected:
                         throw ;
                     }
                     this->m_impl.m_finish = new_finish;
-                    std::fill(pos, old_finish, x_copy);
+                    ft::fill(pos, old_finish, x_copy);
                 }
             }
             catch(...)

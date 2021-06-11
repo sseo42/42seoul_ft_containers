@@ -24,6 +24,7 @@ struct Identity : public std::unary_function<Tp, Tp>
     const Tp& operator()(const Tp& x) const
     { return x; }
 };
+
 } // namespace ft
 
 #endif /*FT_FUNCTION_HPP */

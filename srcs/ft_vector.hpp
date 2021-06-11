@@ -2,6 +2,7 @@
 # define FT_VECTOR_HPP
 
 # include "ft_iter.hpp"
+# include "ft_library.hpp"
 # include <memory>
 
 /**
@@ -400,7 +401,7 @@ protected:
                         Base::m_get_tp_allocator());
                     std::uninitialized_copy(pos, pos + elems_after - n,
                         old_finish - elems_after + n);
-                    std::fill(pos, pos + n, x);
+                    ft::fill(pos, pos + n, x);
                 }
                 else
                 {
@@ -409,7 +410,7 @@ protected:
                     std::uninitialized_copy(this->m_impl.m_finish - n,
                         old_finish, this->m_impl.m_finish);
                     this->m_impl.m_finish += elems_after;
-                    std::fill(pos, pos + n, x);
+                    ft::fill(pos, pos + n, x);
                 }
             }
             else
@@ -455,12 +456,12 @@ protected:
         }
         else if (n > size())
         {
-            std::fill(begin(), end(), val); //leaks check
+            ft::fill(begin(), end(), val);
             std::uninitialized_fill_n(this->m_impl.m_finish, n - size(), val);
         }
         else
         {
-            m_erase_at_end(std::fill_n(this->m_impl.m_start, n, val));
+            m_erase_at_end(ft::fill_n(this->m_impl.m_start, n, val));
         }
     }
     void m_erase_at_end(pointer pos)
