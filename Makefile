@@ -2,7 +2,7 @@ NAME = sseo_tester
 
 CC = clang++
 
-CFLAGS = -Wall -Wextra -Werror -std=c++98
+CFLAGS = -Wall -Wextra -Werror
 
 INCLUDES = -I srcs -I tester_srcs
 
