@@ -12,6 +12,7 @@
 # include "ft_multiset.hpp"
 
 # include <iostream>
+# include <algorithm>
 # include <vector>
 # include <list>
 # include <stack>
