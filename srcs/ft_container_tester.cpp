@@ -1,4 +1,4 @@
-#include "ft_tester_vector.hpp"
+#include "ft_vector_tester.hpp"
 #include <sys/stat.h>
 
 bool my_compare(int a, int b)
@@ -8,23 +8,10 @@ bool my_compare(int a, int b)
 
 int     main(void)
 {
-    Vector_tester<ft::Vector<int> > challenger;
-    Vector_tester<std::vector<int> > master;
-    std::fstream    challenger_fstrm, master_fstrm;
-    std::string     challenger_path, master_path;
-    const char *result_dir = "result_log";
+	VectorTester<int> vector_tester;
 
-    mkdir(result_dir, 0666);
-    challenger_path = std::string(result_dir) + "/challenger.result";
-    master_path = std::string(result_dir) + "/master.result";
-    challenger_fstrm.open(challenger_path.c_str(), std::fstream::out | std::fstream::trunc);
-    master_fstrm.open(master_path.c_str(), std::fstream::out | std::fstream::trunc);
-
-    challenger.start_test(challenger_fstrm);
-    master.start_test(master_fstrm);
-
-    challenger_fstrm.close();
-    master_fstrm.close();
+	vector_tester.log("CASE: vector<int> \n--------------------------------");
+	vector_tester.start_test();
 
 
 

@@ -1,18 +1,16 @@
-NAME = sseo_tester
+NAME = ft_container_tester
 
 CC = clang++
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -std=c++98
 
-INCLUDES = -I srcs -I tester_srcs
+INCLUDES = -I containers -I includes
 
 
 # FILES
-MAIN = main
+MAIN = ft_container_tester
 
 SRC_DIR = srcs
-
-TESTER_DIR = tester_srcs
 
 OBJ_DIR = objs
 
@@ -22,10 +20,12 @@ SRCS = $(addsuffix .cpp, $(MAIN))
 
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRCS:.cpp=.o))
 
+
+# MAKE
 $(NAME): $(OBJ_DIR) $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $(NAME) $(OBJS)
 
-$(OBJ_DIR)/%.o: $(TESTER_DIR)/%.cpp
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
 
 $(OBJ_DIR):
