@@ -1,6 +1,7 @@
 #ifndef FT_TESTER_HPP
 # define FT_TESTER_HPP
 
+/*
 # include "ft_vector.hpp"
 # include "ft_list.hpp"
 # include "ft_stack.hpp"
@@ -17,19 +18,22 @@
 # include <queue>
 # include <map>
 # include <set>
+*/
 
 # include <iostream>
 # include <algorithm>
 # include <unistd.h>
 # include <sys/wait.h>
 # include <fstream>
-
-static pid_t test_segv_pid;
+# include <map>
 
 # define RED "\033[31m"
 # define GREEN "\033[32m"
+# define CYN "\033[36m"
 # define YELLOW "\033[33m"
 # define RESET "\033[0m"
+
+static pid_t test_segv_pid;
 
 # define TEST_SEGV(x) do {				\
 	test_segv_pid = fork();				\
@@ -44,7 +48,13 @@ static pid_t test_segv_pid;
 # define ASSERT(x, y) do {						\
 	TEST_SEGV(x);								\
 	if (!WIFEXITED(test_segv_pid)) {			\
-		log_casefault(#x);						\
+		TEST_SEGV(y);							\
+		if (!WIFEXITED(test_segv_pid)) {		\
+			log_casefault(#y);					\
+		}										\
+		else {									\
+			log_fail(#x);						\
+		}										\
 	}											\
 	else {										\
 		TEST_SEGV(y);							\
@@ -57,6 +67,19 @@ static pid_t test_segv_pid;
 		}										\
 	}											\
 } while (0)
+
+bool is_single_digit(const int& val)
+{ return (val < 10); }
+
+struct is_odd {
+	bool operator()(const int& val)
+	{ return (val % 2 == 1); }
+};
+
+bool my_compare(const int& a, const int& b)
+{
+	return (a < b);
+}
 
 class TesterBase
 {
@@ -80,6 +103,13 @@ public:
 				throw ;
 			}
 		}
+
+		function_mapping["compare_size"] = &TesterBase::compare_size;
+		function_mapping["compare_capacity"] = &TesterBase::compare_capacity;
+		function_mapping["compare_iterator"] = &TesterBase::compare_iterator;
+		function_mapping["compare_reverse_iterator"] = &TesterBase::compare_reverse_iterator;
+		function_mapping["compare_ret"] = &TesterBase::compare_ret;
+		function_mapping["compare_empty"] = &TesterBase::compare_empty;
 	}
 
 	~TesterBase() {}
@@ -90,19 +120,23 @@ public:
 
 		if (strm.connected)
 			strm.fd << "[" << name << "] " << out << "\n";
-		std::cout << GREEN << "[" << name << "] " << out << "\n" << RESET;
+		std::cout << CYN << "[" << name << "] " << out << "\n" << RESET;
 	}
 
 	virtual void start_test() = 0;
 
 protected:
+	typedef int (TesterBase::*cmp_func)();
+	typedef std::multimap<std::string, std::string>	cmp_mapping;
+	typedef std::map<std::string, cmp_func> 		func_mapping;
+
 	void log_casefault(const std::string &msg)
 	{
 		std::string out = trim_msg(msg);
 
 		if (strm.connected)
-			strm.fd << "[" << name << "] " << out << std::setw(5) << "Wrong case!\n";
-		std::cerr << RED << "[" << name << "] " << out << std::setw(5) << "Wrong case!\n" << RESET;
+			strm.fd << "[" << name << "] " << std::setw(30) << std::left << out << std::right << "Wrong case!\n";
+		std::cout << RED << "[" << name << "] " << std::setw(30) << std::left << out << std::right << "Wrong case!\n" << RESET;
 	}
 
 	void log_segfault(const std::string &msg)
@@ -110,8 +144,8 @@ protected:
 		std::string out = trim_msg(msg);
 
 		if (strm.connected)
-			strm.fd << "[" << name << "] " << out << "-> " << "Segfault!\n";
-		std::cout << RED << "[" << name << "] " << out << "-> " << "Segfault!\n" << RESET;
+			strm.fd << "[" << name << "] " << std::setw(30) << std::left << out << std::right << "Segfault!\n";
+		std::cout << RED << "[" << name << "] " << std::setw(30) << std::left << out << std::right << "Segfault!\n" << RESET;
 	}
 
 	void log_fail(const std::string &msg)
@@ -135,8 +169,17 @@ protected:
 	void evaluate_function(const std::string &msg)
 	{
 		log_success(msg);
-		compare_container_shape();
+		compare_container_shape(trim_msg(msg));
 	}
+
+	virtual int compare_size() = 0;
+	virtual int compare_capacity() = 0;
+	virtual int compare_iterator() = 0;
+	virtual int compare_reverse_iterator() = 0;
+	virtual int compare_ret() = 0;
+	virtual int compare_empty() = 0;
+
+	cmp_mapping			what_to_test;
 
 private:
 	struct Strm
@@ -185,10 +228,25 @@ private:
 		return out;
 	}
 
-	virtual void compare_container_shape() = 0;
+	void compare_container_shape(const std::string& func_name)
+	{
+		typedef std::multimap<std::string, std::string>::iterator cmp_it;
+
+		for (cmp_it it = what_to_test.begin(); it != what_to_test.end(); ++it)
+		{
+			if (it->first == func_name)
+			{
+				if ((this->*function_mapping[it->second])())
+					log_fail("- " + it->second);
+				else
+					log_success("- " + it->second);
+			}
+		}
+	}
 
 	const std::string	name;
 	Strm 				strm;
+	func_mapping		function_mapping;
 };
 
 #endif /* FT_TESTER_HPP */

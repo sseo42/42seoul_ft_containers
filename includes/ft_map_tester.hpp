@@ -1,26 +1,23 @@
-#ifndef FT_VECTOR_TESTER_HPP
-# define FT_VECTOR_TESTER_HPP
+#ifndef FT_MAP_TESTER_HPP
+# define FT_MAP_TESTER_HPP
 
 # include "ft_tester.hpp"
-# include "ft_vector.hpp"
-# include <vector>
+# include "ft_map.hpp"
+# include <map>
 
 /**
  * 
  */
 
 template<typename Container, typename Tp>
-class VectorTestCase
+class MapTestCase
 {
 public:
     typedef typename Container::iterator    iterator;
 
-    VectorTestCase() {}
+    MapTestCase() {}
 
-    ~VectorTestCase() {}
-
-	iterator begin()
-	{ return container.begin(); }
+    ~MapTestCase() {}
 
     Container& get_container()
     { return container; };
@@ -30,66 +27,19 @@ private:
 };
 
 template<typename Container>
-class VectorTestCase<Container, int>
+class MapTestCase<Container, int>
 {
 public:
     typedef typename Container::iterator    iterator;
 
-    VectorTestCase() {}
+    MapTestCase() {}
 
-    ~VectorTestCase() {}
-
-	void resize()
-	{
-		container.resize(10);
-	}
-
-	void reserve()
-	{
-		container.reserve(1000);
-	}
+    ~MapTestCase() {}
 
 	void operator_braket()
 	{
 		container[3] = 1004;
 		this->ret = container[3];
-	}
-
-	void at()
-	{
-		container.at(0) = 42;
-		this->ret = container.at(0);
-	}
-
-	void front()
-	{
-		this->ret = container.front();
-	}
-
-	void back()
-	{
-		this->ret = container.back();
-	}
-
-	void assign()
-	{
-		container.assign(100, 52);
-	}
-
-	void push_back()
-	{
-		for (int i = 1; i < 10; ++i)
-		{
-			container.push_back(i);
-		}
-	}
-
-	void pop_back()
-	{
-		for (int i = 0; i < 5; ++i)
-		{
-			container.pop_back();
-		}
 	}
 
 	void insert()
@@ -140,14 +90,14 @@ private:
 };
 
 template<typename Container>
-class VectorTestCase<Container, char>
+class MapTestCase<Container, char>
 {
 public:
     typedef typename Container::iterator    iterator;
 
-    VectorTestCase() {}
+    MapTestCase() {}
 
-    ~VectorTestCase() {}
+    ~MapTestCase() {}
 
     Container& get_container()
     { return container; };
@@ -157,14 +107,14 @@ private:
 };
 
 template<typename Container>
-class VectorTestCase<Container, bool>
+class MapTestCase<Container, bool>
 {
 public:
     typedef typename Container::iterator    iterator;
 
-    VectorTestCase() {}
+    MapTestCase() {}
 
-    ~VectorTestCase() {}
+    ~MapTestCase() {}
 
     Container& get_container()
     { return container; };
@@ -174,24 +124,24 @@ private:
 };
 
 template<typename Tp>
-class VectorTester : public TesterBase
+class MapTester : public TesterBase
 {
 public:
-    typedef typename std::vector<Tp>            master;
-    typedef typename ft::Vector<Tp>             challenger;
-    typedef typename std::vector<Tp>::iterator  master_iterator;
-    typedef typename ft::Vector<Tp>::iterator   challenger_iterator;
-	typedef typename std::vector<Tp>::reverse_iterator master_reverse_iterator;
-	typedef typename ft::Vector<Tp>::reverse_iterator challenger_reverse_iterator;
+    typedef typename std::map<Tp>            master;
+    typedef typename ft::Map<Tp>             challenger;
+    typedef typename std::map<Tp>::iterator  master_iterator;
+    typedef typename ft::Map<Tp>::iterator   challenger_iterator;
+	typedef typename std::map<Tp>::reverse_iterator master_reverse_iterator;
+	typedef typename ft::Map<Tp>::reverse_iterator challenger_reverse_iterator;
 
-    VectorTester() : TesterBase("Vector")
+    MapTester() : TesterBase("Map")
 	{ init_what_to_test(); }
 
-    VectorTester(bool log_flag, std::string dir = "")
-        : TesterBase("Vector", log_flag, dir)
+    MapTester(bool log_flag, std::string dir = "")
+        : TesterBase("Map", log_flag, dir)
 	{ init_what_to_test(); }
 
-    ~VectorTester() {}
+    ~MapTester() {}
     
     void start_test()
     {
@@ -359,8 +309,8 @@ private:
 		return 0;
 	}
 
-    VectorTestCase<master, Tp>      		master_case;
-    VectorTestCase<challenger, Tp>  		challenger_case;
+    MapTestCase<master, Tp>      		master_case;
+    MapTestCase<challenger, Tp>  		challenger_case;
 };
 
-#endif /* FT_VECTOR_TESTER_HPP */
+#endif /* FT_map_TESTER_HPP */

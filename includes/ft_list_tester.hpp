@@ -1,23 +1,23 @@
-#ifndef FT_VECTOR_TESTER_HPP
-# define FT_VECTOR_TESTER_HPP
+#ifndef FT_LIST_TESTER_HPP
+# define FT_LIST_TESTER_HPP
 
 # include "ft_tester.hpp"
-# include "ft_vector.hpp"
-# include <vector>
+# include "ft_list.hpp"
+# include <list>
 
 /**
  * 
  */
 
 template<typename Container, typename Tp>
-class VectorTestCase
+class ListTestCase
 {
 public:
     typedef typename Container::iterator    iterator;
 
-    VectorTestCase() {}
+    ListTestCase() {}
 
-    ~VectorTestCase() {}
+    ~ListTestCase() {}
 
 	iterator begin()
 	{ return container.begin(); }
@@ -30,36 +30,14 @@ private:
 };
 
 template<typename Container>
-class VectorTestCase<Container, int>
+class ListTestCase<Container, int>
 {
 public:
     typedef typename Container::iterator    iterator;
 
-    VectorTestCase() {}
+    ListTestCase() {}
 
-    ~VectorTestCase() {}
-
-	void resize()
-	{
-		container.resize(10);
-	}
-
-	void reserve()
-	{
-		container.reserve(1000);
-	}
-
-	void operator_braket()
-	{
-		container[3] = 1004;
-		this->ret = container[3];
-	}
-
-	void at()
-	{
-		container.at(0) = 42;
-		this->ret = container.at(0);
-	}
+    ~ListTestCase() {}
 
 	void front()
 	{
@@ -73,7 +51,15 @@ public:
 
 	void assign()
 	{
-		container.assign(100, 52);
+		Container tmp;
+
+		tmp.assign(1000, 42);
+		container.assign(tmp.begin(), tmp.end());
+	}
+
+	void resize()
+	{
+		container.resize(10);
 	}
 
 	void push_back()
@@ -89,6 +75,22 @@ public:
 		for (int i = 0; i < 5; ++i)
 		{
 			container.pop_back();
+		}
+	}
+
+	void push_front()
+	{
+		for (int i = 100; i < 200; ++i)
+		{
+			container.push_front(i);
+		}
+	}
+
+	void pop_front()
+	{
+		for (int i = 200; i < 250; ++i)
+		{
+			container.pop_front();
 		}
 	}
 
@@ -127,6 +129,77 @@ public:
 		container.clear();
 	}
 
+	void splice()
+	{
+		typename Container::iterator tmp_it;
+		typename Container::iterator container_it;
+		Container tmp(100);
+		Container tmp2(200);
+		Container tmp3(300);
+
+		container_it = container.begin();
+		++container_it;
+		container.splice(container_it, tmp);
+
+		container_it = container.begin();
+		++container_it;
+		++container_it;
+		tmp_it = tmp2.begin();
+		++tmp_it;
+		++tmp_it;
+		container.splice(container_it, tmp2, tmp_it);
+
+		container_it = container.begin();
+		++container_it;
+		++container_it;
+		++container_it;
+		tmp_it = tmp3.begin();
+		++tmp_it;
+		++tmp_it;
+		++tmp_it;
+		container.splice(container_it, tmp3, tmp_it, tmp3.end());
+	}
+
+	void remove()
+	{
+		container.remove(0);
+		container.remove(1004);
+	}
+
+	void remove_if()
+	{
+		for (int i = 0; i < 100; ++i)
+		{
+			container.remove_if(is_single_digit);
+		}
+		container.remove_if(is_odd());
+	}
+
+	void unique()
+	{
+		container.unique();
+		container.unique(my_compare);
+	}
+
+	void merge()
+	{
+		Container tmp(100, 100);
+		Container tmp2(200, 200);
+
+		container.merge(tmp);
+		container.merge(tmp2, my_compare);
+	}
+
+	void sort()
+	{
+		container.sort();
+	}
+
+	void reverse()
+	{
+		container.reverse();
+	}
+
     Container& get_container()
     { return container; }
 
@@ -140,14 +213,14 @@ private:
 };
 
 template<typename Container>
-class VectorTestCase<Container, char>
+class ListTestCase<Container, char>
 {
 public:
     typedef typename Container::iterator    iterator;
 
-    VectorTestCase() {}
+    ListTestCase() {}
 
-    ~VectorTestCase() {}
+    ~ListTestCase() {}
 
     Container& get_container()
     { return container; };
@@ -157,14 +230,14 @@ private:
 };
 
 template<typename Container>
-class VectorTestCase<Container, bool>
+class ListTestCase<Container, bool>
 {
 public:
     typedef typename Container::iterator    iterator;
 
-    VectorTestCase() {}
+    ListTestCase() {}
 
-    ~VectorTestCase() {}
+    ~ListTestCase() {}
 
     Container& get_container()
     { return container; };
@@ -174,57 +247,54 @@ private:
 };
 
 template<typename Tp>
-class VectorTester : public TesterBase
+class ListTester : public TesterBase
 {
 public:
-    typedef typename std::vector<Tp>            master;
-    typedef typename ft::Vector<Tp>             challenger;
-    typedef typename std::vector<Tp>::iterator  master_iterator;
-    typedef typename ft::Vector<Tp>::iterator   challenger_iterator;
-	typedef typename std::vector<Tp>::reverse_iterator master_reverse_iterator;
-	typedef typename ft::Vector<Tp>::reverse_iterator challenger_reverse_iterator;
+    typedef typename std::list<Tp>						master;
+    typedef typename ft::List<Tp>             			challenger;
+    typedef typename std::list<Tp>::iterator  			master_iterator;
+    typedef typename ft::List<Tp>::iterator   			challenger_iterator;
+	typedef typename std::list<Tp>::reverse_iterator 	master_reverse_iterator;
+	typedef typename ft::List<Tp>::reverse_iterator 	challenger_reverse_iterator;
 
-    VectorTester() : TesterBase("Vector")
+    ListTester() : TesterBase("List")
 	{ init_what_to_test(); }
 
-    VectorTester(bool log_flag, std::string dir = "")
-        : TesterBase("Vector", log_flag, dir)
+    ListTester(bool log_flag, std::string dir = "")
+        : TesterBase("List", log_flag, dir)
 	{ init_what_to_test(); }
 
-    ~VectorTester() {}
+    ~ListTester() {}
     
     void start_test()
     {
 		ASSERT(master_case.resize(), challenger_case.resize());
-		ASSERT(master_case.reserve(), challenger_case.reserve());
-		ASSERT(master_case.operator_braket(), challenger_case.operator_braket());
 		ASSERT(master_case.push_back(), challenger_case.push_back());
 		ASSERT(master_case.pop_back(), challenger_case.pop_back());
+		ASSERT(master_case.push_front(), challenger_case.push_front());
+		ASSERT(master_case.pop_front(), challenger_case.pop_front());
 		ASSERT(master_case.insert(), challenger_case.insert());
-		ASSERT(master_case.at(), challenger_case.at());
 		ASSERT(master_case.front(), challenger_case.front());
 		ASSERT(master_case.back(), challenger_case.back());
 		ASSERT(master_case.erase(), challenger_case.erase());
 		ASSERT(master_case.assign(), challenger_case.assign());
-		ASSERT(master_case.swap(), challenger_case.swap());
+		ASSERT(master_case.unique(), challenger_case.unique());
+		ASSERT(master_case.splice(), challenger_case.splice());
 		ASSERT(master_case.clear(), challenger_case.clear());
+		ASSERT(master_case.splice(), challenger_case.splice());
+		ASSERT(master_case.remove(), challenger_case.remove());
+		ASSERT(master_case.remove_if(), challenger_case.remove_if());
+		ASSERT(master_case.merge(), challenger_case.merge());
+		ASSERT(master_case.push_front(), challenger_case.push_front());
+		ASSERT(master_case.sort(), challenger_case.sort());
+		ASSERT(master_case.push_front(), challenger_case.push_front());
+		ASSERT(master_case.reverse(), challenger_case.reverse());
 	}
 
 private:
 	void init_what_to_test()
 	{
-		what_to_test.insert(std::make_pair("resize", "compare_size"));
-		what_to_test.insert(std::make_pair("resize", "compare_iterator"));
-		what_to_test.insert(std::make_pair("resize", "compare_reverse_iterator"));
-
-		what_to_test.insert(std::make_pair("reserve", "compare_capacity"));
-
-		what_to_test.insert(std::make_pair("operator_braket", "compare_ret"));
-
-		what_to_test.insert(std::make_pair("at", "compare_ret"));
-
 		what_to_test.insert(std::make_pair("front", "compare_ret"));
-
 		what_to_test.insert(std::make_pair("back", "compare_ret"));
 
 		what_to_test.insert(std::make_pair("assign", "compare_size"));
@@ -240,6 +310,15 @@ private:
 		what_to_test.insert(std::make_pair("pop_back", "compare_reverse_iterator"));
 		what_to_test.insert(std::make_pair("pop_back", "compare_empty"));
 
+		what_to_test.insert(std::make_pair("push_front", "compare_size"));
+		what_to_test.insert(std::make_pair("push_front", "compare_iterator"));
+		what_to_test.insert(std::make_pair("push_front", "compare_reverse_iterator"));
+
+		what_to_test.insert(std::make_pair("pop_front", "compare_size"));
+		what_to_test.insert(std::make_pair("pop_front", "compare_iterator"));
+		what_to_test.insert(std::make_pair("pop_front", "compare_reverse_iterator"));
+		what_to_test.insert(std::make_pair("pop_front", "compare_empty"));
+
 		what_to_test.insert(std::make_pair("insert", "compare_size"));
 		what_to_test.insert(std::make_pair("insert", "compare_iterator"));
 		what_to_test.insert(std::make_pair("insert", "compare_reverse_iterator"));
@@ -253,10 +332,44 @@ private:
 		what_to_test.insert(std::make_pair("swap", "compare_iterator"));
 		what_to_test.insert(std::make_pair("swap", "compare_reverse_iterator"));
 
+		what_to_test.insert(std::make_pair("resize", "compare_size"));
+		what_to_test.insert(std::make_pair("resize", "compare_iterator"));
+		what_to_test.insert(std::make_pair("resize", "compare_reverse_iterator"));
+
 		what_to_test.insert(std::make_pair("clear", "compare_size"));
 		what_to_test.insert(std::make_pair("clear", "compare_iterator"));
 		what_to_test.insert(std::make_pair("clear", "compare_reverse_iterator"));
 		what_to_test.insert(std::make_pair("clear", "compare_empty"));
+
+		what_to_test.insert(std::make_pair("splice", "compare_size"));
+		what_to_test.insert(std::make_pair("splice", "compare_iterator"));
+		what_to_test.insert(std::make_pair("splice", "compare_reverse_iterator"));
+
+		what_to_test.insert(std::make_pair("remove", "compare_size"));
+		what_to_test.insert(std::make_pair("remove", "compare_iterator"));
+		what_to_test.insert(std::make_pair("remove", "compare_reverse_iterator"));
+		what_to_test.insert(std::make_pair("remove", "compare_empty"));
+
+		what_to_test.insert(std::make_pair("remove_if", "compare_size"));
+		what_to_test.insert(std::make_pair("remove_if", "compare_iterator"));
+		what_to_test.insert(std::make_pair("remove_if", "compare_reverse_iterator"));
+		what_to_test.insert(std::make_pair("remove_if", "compare_empty"));
+
+		what_to_test.insert(std::make_pair("unique", "compare_size"));
+		what_to_test.insert(std::make_pair("unique", "compare_iterator"));
+		what_to_test.insert(std::make_pair("unique", "compare_reverse_iterator"));
+		what_to_test.insert(std::make_pair("unique", "compare_empty"));
+
+		what_to_test.insert(std::make_pair("merge", "compare_size"));
+		what_to_test.insert(std::make_pair("merge", "compare_iterator"));
+		what_to_test.insert(std::make_pair("merge", "compare_reverse_iterator"));
+		what_to_test.insert(std::make_pair("merge", "compare_empty"));
+
+		what_to_test.insert(std::make_pair("sort", "compare_iterator"));
+		what_to_test.insert(std::make_pair("sort", "compare_reverse_iterator"));
+
+		what_to_test.insert(std::make_pair("reverse", "compare_iterator"));
+		what_to_test.insert(std::make_pair("reverse", "compare_reverse_iterator"));
 	}
 
 	int compare_size()
@@ -272,10 +385,6 @@ private:
 
 	int compare_capacity()
 	{
-		size_t master_capacity = master_case.get_container().capacity();
-		size_t challenger_capacity = challenger_case.get_container().capacity();
-		if (master_capacity != challenger_capacity)
-			return 1;
 		return 0;
 	}
 
@@ -359,8 +468,8 @@ private:
 		return 0;
 	}
 
-    VectorTestCase<master, Tp>      		master_case;
-    VectorTestCase<challenger, Tp>  		challenger_case;
+    ListTestCase<master, Tp>      		master_case;
+    ListTestCase<challenger, Tp>  		challenger_case;
 };
 
-#endif /* FT_VECTOR_TESTER_HPP */
+#endif /* FT_LIST_TESTER_HPP */

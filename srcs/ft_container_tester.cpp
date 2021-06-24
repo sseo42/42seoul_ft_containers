@@ -1,4 +1,7 @@
 #include "ft_vector_tester.hpp"
+#include "ft_list_tester.hpp"
+#include "ft_stack_tester.hpp"
+#include "ft_queue_tester.hpp"
 #include <sys/stat.h>
 
 bool my_compare(int a, int b)
@@ -10,10 +13,23 @@ int     main(void)
 {
 	VectorTester<int> vector_tester;
 
-	vector_tester.log("CASE: vector<int> \n--------------------------------");
+	vector_tester.log("         CASE:       <int>     \n--------------------------------------------");
 	vector_tester.start_test();
 
+	ListTester<int> list_tester;
 
+	list_tester.log("         CASE:       <int>     \n--------------------------------------------");
+	list_tester.start_test();
+
+	StackTester<int> stack_tester;
+
+	stack_tester.log("         CASE:       <int>     \n--------------------------------------------");
+	stack_tester.start_test();
+
+	QueueTester<int> queue_tester;
+
+	queue_tester.log("         CASE:       <int>     \n--------------------------------------------");
+	queue_tester.start_test();
 
     // while (!challenger_fstrm.eof() && !master_fstrm.eof())
     // {
