@@ -134,8 +134,8 @@ class ListIterator
 public:
     typedef ListIterator<Tp>                Self;
     typedef ListNode<Tp>                    Node;
-    typedef long                            dirrerence_type;
-    typedef std::bidirectional_iterator_tag interator_category;
+    typedef long                            difference_type;
+    typedef std::bidirectional_iterator_tag iterator_category;
     typedef Tp                              value_type;
     typedef Tp*                             pointer;
     typedef Tp&                             reference;
@@ -180,8 +180,8 @@ public:
     typedef ListConstIterator<Tp>           Self;
     typedef ListNode<Tp>                    Node;
     typedef ListIterator<Tp>                iterator;
-    typedef long                            dirrerence_type;
-    typedef std::bidirectional_iterator_tag interator_category;
+    typedef long                            difference_type;
+    typedef std::bidirectional_iterator_tag iterator_category;
     typedef Tp                              value_type;
     typedef Tp*                             pointer;
     typedef Tp&                             reference;
@@ -256,7 +256,7 @@ public:
 
     ~ListBase() { m_clear(); }
 
-    static size_t s_distance(ft::ListNodeBase* first, ft::ListNodeBase* last)
+    static size_t s_distance(const ft::ListNodeBase* first, const ft::ListNodeBase* last)
     {
         size_t n = 0;
         while (first != last)
@@ -323,7 +323,7 @@ public:
 
     List() : Base() {}
     List(const Alloc_type& a) : Base(Node_alloc_type(a)) {};
-    List(size_t n, const value_type* x = value_type(),
+    List(size_t n, const value_type& x = value_type(),
         const Alloc_type& a = Alloc_type())
         : Base(Node_alloc_type(a))
     { m_fill_initialize(n, x); }
@@ -411,7 +411,7 @@ public:
     { this->m_erase(begin()); }
 
     void pop_back()
-    { this->m_earse(iterator(this->m_impl.m_node.m_prev)); }
+    { this->m_erase(iterator(this->m_impl.m_node.m_prev)); }
 
     void assign(size_t n, const value_type& val) { m_fill_assign(n, val); }
 
@@ -422,7 +422,11 @@ public:
         m_assign_dispatch(first, last, Integral());
     }
     iterator insert(iterator pos, const value_type& x)
-    { m_insert(pos, x); }
+	{
+        Node* tmp = m_create_node(x);
+        tmp->m_hook(pos.m_node);
+		return iterator(pos);
+	}
 
     void insert(iterator pos, size_t n, const value_type& x)
     {
@@ -438,7 +442,7 @@ public:
 
     iterator erase(iterator pos)
     {
-        iterator ret = iterator(pos->m_next);
+        iterator ret = iterator(pos.m_node->m_next);
         m_erase(pos);
         return ret;
     }
@@ -648,7 +652,7 @@ public:
         catch(...)
         {
             this->splice(this->end(), carry);
-            for (int i = 0; i < sizeof(tmp) / sizeof(tmp[0]); ++i)
+            for (size_t i = 0; i < sizeof(tmp) / sizeof(tmp[0]); ++i)
                 this->splice(this->end(), tmp[i]);
             throw ;
         }
@@ -734,6 +738,30 @@ protected:
             push_back(x);
     }
 
+	template<typename Integer>
+	void m_assign_dispatch(Integer n, Integer x, ft::TrueType)
+	{
+		m_fill_assign(n, x);
+	}
+
+	template<typename InputIter>
+	void m_assign_dispatch(InputIter first2, InputIter last2, ft::FalseType)
+	{
+		iterator first1 = begin();
+		iterator last1 = end();
+
+		while (first1 != last1 && first2 != last2)
+		{
+			*first1 = *first2;
+			++first1;
+			++first2;
+		}
+		if (first2 == last2)
+			erase(first1, last1);
+		else
+			insert(first1, first2, last2);
+	}
+
     void m_insert(iterator pos, const value_type& x)
     {
         Node* tmp = m_create_node(x);
@@ -751,10 +779,10 @@ protected:
     }
     void m_erase(iterator pos)
     {
-        pos->m_node.m_unhook();
+        pos.m_node->m_unhook();
         Node* tmp = static_cast<Node*>(pos.m_node);
         Tp_alloc_type(Base::m_get_node_allocator()).destroy(tmp->m_valptr());
-        m_put_node(tmp);
+        this->m_put_node(tmp);
     }
     void m_transfer(iterator pos, iterator first, iterator last)
     {

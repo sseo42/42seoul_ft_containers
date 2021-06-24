@@ -224,12 +224,12 @@ public:
         if (this->capacity() < n)
         {
             pointer new_start = Base::m_allocate(n);
-            pointer new_finish = std::uninitialized_copy(this->m_impl.start,
+            pointer new_finish = std::uninitialized_copy(this->m_impl.m_start,
                 this->m_impl.m_finish, new_start);
             ft::destroy(this->m_impl.m_start, this->m_impl.m_finish,
                 Base::m_get_tp_allocator());
             Base::m_deallocate(this->m_impl.m_start,
-                size_t(this->m_impl.m_end_of_storage - this->m_impl.start));
+                size_t(this->m_impl.m_end_of_storage - this->m_impl.m_start));
             this->m_impl.m_start = new_start;
             this->m_impl.m_finish = new_finish;
             this->m_impl.m_end_of_storage = new_start + n;
@@ -399,8 +399,8 @@ protected:
                     this->m_impl.m_finish += n;
                     ft::destroy(old_finish - elems_after + n, old_finish,
                         Base::m_get_tp_allocator());
-                    std::uninitialized_copy(pos, pos + elems_after - n,
-                        old_finish - elems_after + n);
+                    std::copy_backward(pos, pos + elems_after - n,
+                        old_finish);
                     ft::fill(pos, pos + n, x);
                 }
                 else
@@ -457,7 +457,7 @@ protected:
         else if (n > size())
         {
             ft::fill(begin(), end(), val);
-            std::uninitialized_fill_n(this->m_impl.m_finish, n - size(), val);
+            this->m_impl.m_finish = std::uninitialized_fill_n(this->m_impl.m_finish, n - size(), val);
         }
         else
         {

@@ -95,7 +95,7 @@ public:
     typedef std::iterator_traits<Iterator>          traits_type;
     typedef Iterator                                iterator_type;
     typedef typename traits_type::iterator_category iterator_category;
-    typedef typename traits_type::value_type        value_type;             //check usage
+    typedef typename traits_type::value_type        value_type;
     typedef typename traits_type::difference_type   difference_type;
     typedef typename traits_type::reference         reference;
     typedef typename traits_type::pointer           pointer;
