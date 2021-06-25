@@ -11,7 +11,7 @@ namespace ft
 enum rbtree_color { Red = false, Black = true };
 
 // it has color and {parent, left, right} node and has functions to get leftest rightest node
-struct Rbtree_node_base // it 
+struct Rbtree_node_base
 {
     typedef Rbtree_node_base*               Base_ptr;
     typedef const Rbtree_node_base*         Const_Base_ptr;
@@ -58,7 +58,7 @@ struct Rbtree_key_compare
 };
 
 // it has header which type is node_base and node_count
-struct Rbtree_header // 
+struct Rbtree_header
 {
     Rbtree_header()
     { m_header.m_color = Red; m_reset(); }
@@ -629,7 +629,7 @@ public:
     { return m_impl.m_node_count; }
 
     size_t max_size() const
-    { return m_get_node_allocator().max_size(); } // check
+    { return m_get_node_allocator().max_size(); }
 
     void swap(Rbtree& x)
     {
@@ -777,7 +777,7 @@ public:
             iterator before = pos;
             if (pos.m_node == m_leftmost())
                 return Res(m_leftmost(), m_leftmost());
-            else if (!this->m_impl.m_key_compare(k, s_key(--before).m_node))
+            else if (!this->m_impl.m_key_compare(s_key((--before).m_node), k))
             {
                 if (s_right(before.m_node) == 0)
                     return Res(0, before.m_node);
@@ -1277,7 +1277,7 @@ private:
         }
         catch(...)
         {
-            top->m_parent->m_right = 0; //check
+            top->m_parent->m_right = 0;
             m_erase(top);
             throw ;
         }

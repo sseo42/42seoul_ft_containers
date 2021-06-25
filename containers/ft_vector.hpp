@@ -147,10 +147,37 @@ public:
             size_t(this->m_impl.m_end_of_storage - this->m_impl.m_start));
     }
 
-    // Vector& operator=(const Vector& v)
-    // {
-    //     Base()
-    // }
+    Vector& operator=(const Vector& obj)
+    {
+		if (&obj != this)
+		{
+			const size_t obj_len = obj.size();
+
+			if (obj_len > capacity())
+			{
+				pointer tmp = this->m_allocate_and_copy(obj_len, obj.begin(), obj.end());
+	            ft::destroy(this->m_impl.m_start, this->m_impl.m_finish,
+                	Base::m_get_tp_allocator());
+				Base::m_deallocate(this->m_impl.m_start,
+					this->m_impl.m_end_of_storage - this->m_impl.m_start);
+				this->m_impl.m_start = tmp;
+				this->m_impl.m_end_of_storage = this->m_impl.m_start + obj_len;
+			}
+			else if (size() >= obj_len)
+			{
+				ft::destroy(std::copy(obj.begin(), obj.end(), begin()), end(),
+					Base::m_get_tp_allocator());
+			}
+			else
+			{
+				std::copy(obj.m_impl.m_start, obj.m_impl.m_start + size(), this->m_impl.m_start);
+				std::uninitialized_copy(obj.m_impl.m_start + size(), obj.m_impl.m_finish,
+					this->m_impl.m_finish);
+			}
+			this->m_impl.m_finish = this->m_impl.m_start + obj_len;
+		}
+		return *this;
+    }
 
     iterator begin()
     { return iterator(this->m_impl.m_start); }
@@ -469,6 +496,21 @@ protected:
         ft::destroy(pos, this->m_impl.m_finish, Base::m_get_tp_allocator());
         this->m_impl.m_finish = pos;
     }
+	template<typename ForwardIterator>
+	pointer m_allocate_and_copy(size_t n, ForwardIterator first, ForwardIterator last)
+	{
+		pointer res = this->m_allocate(n);
+		try
+		{
+			std::uninitialized_copy(first, last, res);
+			return res;
+		}
+		catch (...)
+		{
+			Base::m_deallocate(res, n);
+			throw ;
+		}
+	}
     void m_realloc_insert(iterator pos, const value_type& x)
     {
         const size_t len = m_check_len(size_t(1), "Vector:: m_realloc_insert");

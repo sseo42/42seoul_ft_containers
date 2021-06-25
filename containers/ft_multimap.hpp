@@ -19,9 +19,6 @@
  *      size        clear
  *      max_size    clear
  * 
- * element access:
- *      operator[]  clear
- * 
  * modifiers:
  *      insert      clear
  *      erase       clear

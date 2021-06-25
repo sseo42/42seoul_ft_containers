@@ -45,7 +45,6 @@ namespace ft
 
 inline size_t deque_buf_size(size_t size)
 { return (size < DEQUE_BUF_SIZE) ? size_t(DEQUE_BUF_SIZE / size) : size_t(1); }
-    // check
 
 template<typename Tp, typename Ref, typename Ptr>
 struct DequeIterator
@@ -423,7 +422,7 @@ public:
     Deque(size_t n, const value_type& value = value_type(),
         const Alloc_type& a = Alloc_type()) : Base(a, n)
     { m_fill_initialize(value); }
-    Deque(const Deque& x) : Base(x.m_get_tp_allocator(), x.size()) //problem copy
+    Deque(const Deque& x) : Base(x.m_get_tp_allocator(), x.size())
     { std::uninitialized_copy(x.begin(), x.end(), this->m_impl.m_start); }
 
     template<typename InputIter>
@@ -435,6 +434,31 @@ public:
     }
     ~Deque()
     { m_destroy_data(begin(), end()); }
+
+	Deque& operator=(const Deque& obj)
+	{
+		if (&obj != this)
+		{
+			const size_t len = size();
+			if (len >= obj.size())
+			{
+				m_erase_at_end(std::copy(obj.begin(), obj.end(), this->m_impl.m_start));
+			}
+			else
+			{
+				const_iterator mid = obj.begin() + difference_type(len);
+				std::copy(obj.begin(), mid, this->m_impl.m_start);
+				m_range_insert(this->m_impl.m_finish, mid, obj.end());
+			}
+		}
+		return *this;
+	}
+
+    reference operator[](size_t n)
+    { return this->m_impl.m_start[difference_type(n)]; }
+
+    const reference operator[](size_t n) const
+    { return this->m_impl.m_start[difference_type(n)]; }
 
     iterator begin()
     { return this->m_impl.m_start; }
@@ -477,12 +501,6 @@ public:
 
     bool empty() const
     { return this->m_impl.m_start == this->m_impl.m_finish; }
-
-    reference operator[](size_t n)
-    { return this->m_impl.m_start[difference_type(n)]; }
-
-    const reference operator[](size_t n) const
-    { return this->m_impl.m_start[difference_type(n)]; }
 
     reference at(size_t n)
     {
@@ -631,7 +649,7 @@ protected:
             for (cur = this->m_impl.m_start.m_node;
                 cur < this->m_impl.m_finish.m_node; ++cur)
                 std::uninitialized_fill(*cur, *cur + s_buf_size(), value);
-            std::uninitialized_fill(this->m_impl.m_finish.m_finish,
+            std::uninitialized_fill(this->m_impl.m_finish.m_first,
                 this->m_impl.m_finish.m_cur, value);
         }
         catch(...)
@@ -744,7 +762,7 @@ protected:
         }
     }
 
-    iterator m_insert(iterator pos, const value_type& x) //check error case
+    iterator m_insert(iterator pos, const value_type& x)
     {
         value_type x_copy = x;
         difference_type index = pos - this->m_impl.m_start;
@@ -779,7 +797,7 @@ protected:
         {
             iterator new_start = m_reserve_elems_at_front(n);
             iterator old_start = this->m_impl.m_start;
-            pos = this->m_impl.m_start + elems_before; // need?
+            pos = this->m_impl.m_start + elems_before;
             try
             {
                 if (elems_before >= difference_type(n))
@@ -787,7 +805,7 @@ protected:
                     iterator start_n = this->m_impl.m_start + difference_type(n);
                     std::uninitialized_copy(this->m_impl.m_start, start_n, new_start);
                     this->m_impl.m_start = new_start;
-                    std::copy(start_n, pos, old_start); //check memory leak
+                    std::copy(start_n, pos, old_start);
                     ft::fill(pos - difference_type(n), pos, x_copy);
                 }
                 else
@@ -825,7 +843,7 @@ protected:
                     iterator finish_n = this->m_impl.m_finish - difference_type(n);
                     std::uninitialized_copy(finish_n, this->m_impl.m_finish, this->m_impl.m_finish);
                     this->m_impl.m_finish = new_finish;
-                    std::copy_backward(pos, finish_n, old_finish); //check 3rd argument
+                    std::copy_backward(pos, finish_n, old_finish);
                     ft::fill(pos, pos + difference_type(n), x_copy);
                 }
                 else
@@ -861,7 +879,7 @@ protected:
         {
             iterator new_start = m_reserve_elems_at_front(n);
             iterator old_start = this->m_impl.m_start;
-            pos = this->m_impl.m_start + elems_before; // need?
+            pos = this->m_impl.m_start + elems_before;
             try
             {
                 if (elems_before >= difference_type(n))
@@ -901,14 +919,14 @@ protected:
             iterator new_finish = m_reserve_elems_at_back(n);
             iterator old_finish = this->m_impl.m_finish;
             const difference_type elems_after = difference_type(len) - elems_before;
-            pos = this->m_impl.m_finish - elems_after; //need?
+            pos = this->m_impl.m_finish - elems_after;
             try
             {
                 if (elems_after > difference_type(n))
                 {
                     iterator finish_n = this->m_impl.m_finish - difference_type(n);
                     std::uninitialized_copy(finish_n, this->m_impl.m_finish, this->m_impl.m_finish);
-                    std::copy_backward(pos, finish_n, this->m_impl.m_finish); //check 3rd argment
+                    std::copy_backward(pos, finish_n, this->m_impl.m_finish);
                     this->m_impl.m_finish = new_finish;
                     std::copy(first, last, pos);
                 }
@@ -1022,7 +1040,7 @@ protected:
         }
         catch(...)
         {
-            this->m_impl.destroy(this->m_impl.m_finish.m_cur); //check error
+            this->m_impl.destroy(this->m_impl.m_finish.m_cur);
             Base::m_deallocate_node(*(this->m_impl.m_finish.m_node + 1));
             throw ;
         }

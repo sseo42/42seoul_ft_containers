@@ -334,7 +334,7 @@ public:
         typedef typename ft::is_integer<InputIter>::type Integral;
         m_initialize_dispatch(first, last, Integral());
     }
-    List(const List& x) : Base(x.m_get_node_allocator()) //problem copy
+    List(const List& x) : Base(x.m_get_node_allocator())
     { m_initialize_dispatch(x.begin().m_const_cast(),
         x.end().m_const_cast(), ft::FalseType()); }
 

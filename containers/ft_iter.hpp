@@ -33,7 +33,7 @@ public:
     { Iterator tmp = m_current; return *(--tmp); } 
 
     pointer operator->() const
-    { Iterator tmp = m_current; return ft::addressof(operator*()); }
+    { return ft::addressof(operator*()); }
 
     ReverseIterator& operator++()
     { --m_current; return *this; }
