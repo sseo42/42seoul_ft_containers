@@ -2,6 +2,11 @@
 #include "ft_list_tester.hpp"
 #include "ft_stack_tester.hpp"
 #include "ft_queue_tester.hpp"
+#include "ft_map_tester.hpp"
+#include "ft_multimap_tester.hpp"
+#include "ft_deque_tester.hpp"
+#include "ft_set_tester.hpp"
+#include "ft_multiset_tester.hpp"
 #include <sys/stat.h>
 
 bool my_compare(int a, int b)
@@ -30,6 +35,31 @@ int     main(void)
 
 	queue_tester.log("         CASE:       <int>     \n--------------------------------------------");
 	queue_tester.start_test();
+
+	MapTester<int, int> map_tester;
+
+	map_tester.log("         CASE:     <int, int>   \n--------------------------------------------");
+	map_tester.start_test();
+
+	MultimapTester<int, int> multimap_tester;
+
+	multimap_tester.log("         CASE:     <int, int>   \n--------------------------------------------");
+	multimap_tester.start_test();
+
+	DequeTester<int> deque_tester;
+
+	deque_tester.log("         CASE:       <int>     \n--------------------------------------------");
+	deque_tester.start_test();
+
+	SetTester<int> set_tester;
+
+	set_tester.log("         CASE:     <int, int>   \n--------------------------------------------");
+	set_tester.start_test();
+
+	MultisetTester<int> multiset_tester;
+
+	multiset_tester.log("         CASE:     <int, int>   \n--------------------------------------------");
+	multiset_tester.start_test();
 
     // while (!challenger_fstrm.eof() && !master_fstrm.eof())
     // {

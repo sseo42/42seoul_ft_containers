@@ -1,26 +1,23 @@
-#ifndef FT_VECTOR_TESTER_HPP
-# define FT_VECTOR_TESTER_HPP
+#ifndef FT_DEQUE_TESTER_HPP
+# define FT_DEQUE_TESTER_HPP
 
 # include "ft_tester.hpp"
-# include "ft_vector.hpp"
-# include <vector>
+# include "ft_deque.hpp"
+# include <deque>
 
 /**
  * 
  */
 
 template<typename Container, typename Tp>
-class VectorTestCase
+class DequeTestCase
 {
 public:
     typedef typename Container::iterator    iterator;
 
-    VectorTestCase() {}
+    DequeTestCase() {}
 
-    ~VectorTestCase() {}
-
-	iterator begin()
-	{ return container.begin(); }
+    ~DequeTestCase() {}
 
     Container& get_container()
     { return container; };
@@ -30,23 +27,18 @@ private:
 };
 
 template<typename Container>
-class VectorTestCase<Container, int>
+class DequeTestCase<Container, int>
 {
 public:
     typedef typename Container::iterator    iterator;
 
-    VectorTestCase() {}
+    DequeTestCase() {}
 
-    ~VectorTestCase() {}
+    ~DequeTestCase() {}
 
 	void resize()
 	{
 		container.resize(10);
-	}
-
-	void reserve()
-	{
-		container.reserve(1000);
 	}
 
 	void operator_braket()
@@ -87,6 +79,22 @@ public:
 	void pop_back()
 	{
 		for (int i = 0; i < 5; ++i)
+		{
+			container.pop_back();
+		}
+	}
+
+	void push_front()
+	{
+		for (int i = -300; i < 300; ++i)
+		{
+			container.push_back(i);
+		}
+	}
+
+	void pop_front()
+	{
+		for (int i = 0; i < 50; ++i)
 		{
 			container.pop_back();
 		}
@@ -143,14 +151,14 @@ private:
 };
 
 template<typename Container>
-class VectorTestCase<Container, char>
+class DequeTestCase<Container, char>
 {
 public:
     typedef typename Container::iterator    iterator;
 
-    VectorTestCase() {}
+    DequeTestCase() {}
 
-    ~VectorTestCase() {}
+    ~DequeTestCase() {}
 
     Container& get_container()
     { return container; };
@@ -160,14 +168,14 @@ private:
 };
 
 template<typename Container>
-class VectorTestCase<Container, bool>
+class DequeTestCase<Container, bool>
 {
 public:
     typedef typename Container::iterator    iterator;
 
-    VectorTestCase() {}
+    DequeTestCase() {}
 
-    ~VectorTestCase() {}
+    ~DequeTestCase() {}
 
     Container& get_container()
     { return container; };
@@ -177,32 +185,31 @@ private:
 };
 
 template<typename Tp>
-class VectorTester : public TesterBase
+class DequeTester : public TesterBase
 {
 public:
-    typedef typename std::vector<Tp>            master;
-    typedef typename ft::Vector<Tp>             challenger;
-    typedef typename std::vector<Tp>::iterator  master_iterator;
-    typedef typename ft::Vector<Tp>::iterator   challenger_iterator;
-	typedef typename std::vector<Tp>::reverse_iterator master_reverse_iterator;
-	typedef typename ft::Vector<Tp>::reverse_iterator challenger_reverse_iterator;
+    typedef typename std::deque<Tp>            master;
+    typedef typename ft::Deque<Tp>             challenger;
+    typedef typename std::deque<Tp>::iterator  master_iterator;
+    typedef typename ft::Deque<Tp>::iterator   challenger_iterator;
+	typedef typename std::deque<Tp>::reverse_iterator master_reverse_iterator;
+	typedef typename ft::Deque<Tp>::reverse_iterator challenger_reverse_iterator;
 
-    VectorTester() : TesterBase("Vector")
+    DequeTester() : TesterBase("Deque")
 	{ init_what_to_test(); }
 
-    VectorTester(bool log_flag, std::string dir = "")
-        : TesterBase("Vector", log_flag, dir)
+    DequeTester(bool log_flag, std::string dir = "")
+        : TesterBase("Deque", log_flag, dir)
 	{ init_what_to_test(); }
 
-    ~VectorTester() {}
+    ~DequeTester() {}
     
     void start_test()
     {
 		ASSERT(master_case.resize(), challenger_case.resize());
-		ASSERT(master_case.reserve(), challenger_case.reserve());
-		ASSERT(master_case.operator_braket(), challenger_case.operator_braket());
 		ASSERT(master_case.push_back(), challenger_case.push_back());
 		ASSERT(master_case.pop_back(), challenger_case.pop_back());
+		ASSERT(master_case.operator_braket(), challenger_case.operator_braket());
 		ASSERT(master_case.insert(), challenger_case.insert());
 		ASSERT(master_case.at(), challenger_case.at());
 		ASSERT(master_case.front(), challenger_case.front());
@@ -210,6 +217,8 @@ public:
 		ASSERT(master_case.erase(), challenger_case.erase());
 		ASSERT(master_case.assign(), challenger_case.assign());
 		ASSERT(master_case.swap(), challenger_case.swap());
+		ASSERT(master_case.push_front(), challenger_case.push_front());
+		ASSERT(master_case.pop_front(), challenger_case.pop_front());
 		ASSERT(master_case.clear(), challenger_case.clear());
 	}
 
@@ -219,8 +228,6 @@ private:
 		what_to_test.insert(std::make_pair("resize", "compare_size"));
 		what_to_test.insert(std::make_pair("resize", "compare_iterator"));
 		what_to_test.insert(std::make_pair("resize", "compare_reverse_iterator"));
-
-		what_to_test.insert(std::make_pair("reserve", "compare_capacity"));
 
 		what_to_test.insert(std::make_pair("operator_braket", "compare_ret"));
 
@@ -256,10 +263,21 @@ private:
 		what_to_test.insert(std::make_pair("swap", "compare_iterator"));
 		what_to_test.insert(std::make_pair("swap", "compare_reverse_iterator"));
 
+		/*
 		what_to_test.insert(std::make_pair("clear", "compare_size"));
 		what_to_test.insert(std::make_pair("clear", "compare_iterator"));
 		what_to_test.insert(std::make_pair("clear", "compare_reverse_iterator"));
 		what_to_test.insert(std::make_pair("clear", "compare_empty"));
+	*/
+
+		what_to_test.insert(std::make_pair("push_front", "compare_size"));
+		what_to_test.insert(std::make_pair("push_front", "compare_iterator"));
+		what_to_test.insert(std::make_pair("push_front", "compare_reverse_iterator"));
+
+		what_to_test.insert(std::make_pair("pop_front", "compare_size"));
+		what_to_test.insert(std::make_pair("pop_front", "compare_iterator"));
+		what_to_test.insert(std::make_pair("pop_front", "compare_reverse_iterator"));
+		what_to_test.insert(std::make_pair("pop_front", "compare_empty"));
 	}
 
 	int compare_size()
@@ -275,10 +293,6 @@ private:
 
 	int compare_capacity()
 	{
-		size_t master_capacity = master_case.get_container().capacity();
-		size_t challenger_capacity = challenger_case.get_container().capacity();
-		if (master_capacity != challenger_capacity)
-			return 1;
 		return 0;
 	}
 
@@ -362,8 +376,8 @@ private:
 		return 0;
 	}
 
-    VectorTestCase<master, Tp>      		master_case;
-    VectorTestCase<challenger, Tp>  		challenger_case;
+    DequeTestCase<master, Tp>      		master_case;
+    DequeTestCase<challenger, Tp>  		challenger_case;
 };
 
-#endif /* FT_VECTOR_TESTER_HPP */
+#endif /* FT_DEQUE_TESTER_HPP */

@@ -1,25 +1,6 @@
 #ifndef FT_TESTER_HPP
 # define FT_TESTER_HPP
 
-/*
-# include "ft_vector.hpp"
-# include "ft_list.hpp"
-# include "ft_stack.hpp"
-# include "ft_queue.hpp"
-# include "ft_deque.hpp"
-# include "ft_map.hpp"
-# include "ft_multimap.hpp"
-# include "ft_set.hpp"
-# include "ft_multiset.hpp"
-
-# include <vector>
-# include <list>
-# include <stack>
-# include <queue>
-# include <map>
-# include <set>
-*/
-
 # include <iostream>
 # include <algorithm>
 # include <unistd.h>

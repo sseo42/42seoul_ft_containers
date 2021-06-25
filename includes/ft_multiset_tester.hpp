@@ -1,23 +1,23 @@
-#ifndef FT_MAP_TESTER_HPP
-# define FT_MAP_TESTER_HPP
+#ifndef FT_MULTISET_TESTER_HPP
+# define FT_MULTISET_TESTER_HPP
 
 # include "ft_tester.hpp"
-# include "ft_map.hpp"
-# include <map>
+# include "ft_multiset.hpp"
+# include <set>
 
 /**
  * 
  */
 
-template<typename Container, typename Key, typename Val>
-class MapTestCase
+template<typename Container, typename Key>
+class MultisetTestCase
 {
 public:
     typedef typename Container::iterator    iterator;
 
-    MapTestCase() {}
+    MultisetTestCase() {}
 
-    ~MapTestCase() {}
+    ~MultisetTestCase() {}
 
     Container& get_container()
     { return container; };
@@ -27,44 +27,28 @@ private:
 };
 
 template<typename Container>
-class MapTestCase<Container, int, int>
+class MultisetTestCase<Container, int>
 {
 public:
     typedef typename Container::iterator    iterator;
 
-    MapTestCase() {}
+    MultisetTestCase() {}
 
-    ~MapTestCase() {}
-
-	void operator_braket()
-	{
-		for (int i = 0; i < 1000; ++i)
-		{
-			container[i] = i + 1;
-		}
-		container[3] = 1004;
-		this->ret = container[3];
-	}
+    ~MultisetTestCase() {}
 
 	void insert()
 	{
-		typedef typename Container::value_type val_type;
-
 		Container tmp;
 
-		for (int i = 0; i < 1000; ++i)
+		for (int i = 0; i < 10; ++i)
 		{
-			val_type val(i, i + 1);
-			tmp.insert(val);
+			tmp.insert(i);
 		}
-		for (int i = 0; i < 100; ++i)
+		for (int i = 0; i < 10; ++i)
 		{
-			val_type val(i, i + 1);
-			tmp.insert(val);
+			tmp.insert(i);
 		}
-
 		Container tmp2(tmp.begin(), tmp.end());
-
 		container.insert(tmp2.begin(), tmp2.end());
 	}
 
@@ -98,7 +82,7 @@ public:
 
 	void find()
 	{
-		this->ret = container.find(2)->second;
+		this->ret = *container.find(2);
 	}
 
 	void count()
@@ -108,17 +92,17 @@ public:
 
 	void lower_bound()
 	{
-		this->ret = container.lower_bound(1)->first;
+		this->ret = *container.lower_bound(1);
 	}
 
 	void upper_bound()
 	{
-		this->ret = container.upper_bound(1)->second;
+		this->ret = *container.upper_bound(1);
 	}
 
 	void equal_range()
 	{
-		this->ret = container.equal_range(1).first->second;
+		this->ret = *container.equal_range(1).second;
 	}
     Container& get_container()
     { return container; }
@@ -132,29 +116,29 @@ private:
 	int		ret;
 };
 
-template<typename Key, typename Val>
-class MapTester : public TesterBase
+template<typename Key>
+class MultisetTester : public TesterBase
 {
 public:
-    typedef typename std::map<Key, Val>            			master;
-    typedef typename ft::Map<Key, Val>             			challenger;
-    typedef typename std::map<Key, Val>::iterator  			master_iterator;
-    typedef typename ft::Map<Key, Val>::iterator  			challenger_iterator;
-	typedef typename std::map<Key, Val>::reverse_iterator	master_reverse_iterator;
-	typedef typename ft::Map<Key, Val>::reverse_iterator	challenger_reverse_iterator;
+    typedef typename std::multiset<Key>            			master;
+    typedef typename ft::Multiset<Key>             			challenger;
+    typedef typename std::multiset<Key>::iterator  			master_iterator;
+    typedef typename ft::Multiset<Key>::iterator  			challenger_iterator;
+	typedef typename std::multiset<Key>::reverse_iterator	master_reverse_iterator;
+	typedef typename ft::Multiset<Key>::reverse_iterator	challenger_reverse_iterator;
 
-    MapTester() : TesterBase("Map")
+    MultisetTester() : TesterBase("Multiset")
 	{ init_what_to_test(); }
 
-    MapTester(bool log_flag, std::string dir = "")
-        : TesterBase("Map", log_flag, dir)
+    MultisetTester(bool log_flag, std::string dir = "")
+        : TesterBase("Multiset", log_flag, dir)
 	{ init_what_to_test(); }
 
-    ~MapTester() {}
+    ~MultisetTester() {}
     
     void start_test()
     {
-		ASSERT(master_case.operator_braket(), challenger_case.operator_braket());
+		ASSERT(master_case.insert(), challenger_case.insert());
 		ASSERT(master_case.lower_bound(), challenger_case.lower_bound());
 		ASSERT(master_case.upper_bound(), challenger_case.upper_bound());
 		ASSERT(master_case.equal_range(), challenger_case.equal_range());
@@ -169,8 +153,6 @@ public:
 private:
 	void init_what_to_test()
 	{
-		what_to_test.insert(std::make_pair("operator_braket", "compare_ret"));
-
 		what_to_test.insert(std::make_pair("insert", "compare_size"));
 		what_to_test.insert(std::make_pair("insert", "compare_iterator"));
 		what_to_test.insert(std::make_pair("insert", "compare_reverse_iterator"));
@@ -227,8 +209,7 @@ private:
 
        	while (challenger_it != challenger_end && master_it != master_end)
        	{
-       	    if (challenger_it->first != master_it->first || \
-				challenger_it->second != master_it->second)
+       	    if (*challenger_it!= *master_it)
 				return 1;
 			++challenger_it;
 			++master_it;
@@ -239,8 +220,7 @@ private:
 		{
 			challenger_it--;
 			master_it--;
-       	    if (challenger_it->first != master_it->first || \
-				challenger_it->second != master_it->second)
+       	    if (*challenger_it!= *master_it)
 				return 1;
 		}
 		if (challenger_it != challenger_start || master_it != master_start)
@@ -259,8 +239,7 @@ private:
 
        	while (challenger_it != challenger_end && master_it != master_end)
        	{
-       	    if (challenger_it->first != master_it->first || \
-				challenger_it->second != master_it->second)
+       	    if (*challenger_it!= *master_it)
 				return 1;
 			++challenger_it;
 			++master_it;
@@ -271,8 +250,7 @@ private:
 		{
 			challenger_it--;
 			master_it--;
-       	    if (challenger_it->first != master_it->first || \
-				challenger_it->second != master_it->second)
+       	    if (*challenger_it!= *master_it)
 				return 1;
 		}
 		if (challenger_it != challenger_start || master_it != master_start)
@@ -282,8 +260,8 @@ private:
 
 	int compare_ret()
 	{
-		Val master_ret = master_case.get_ret();
-		Val challenger_ret = challenger_case.get_ret();
+		Key master_ret = master_case.get_ret();
+		Key challenger_ret = challenger_case.get_ret();
 
 		if (master_ret != challenger_ret)
 			return 1;
@@ -300,8 +278,8 @@ private:
 		return 0;
 	}
 
-    MapTestCase<master, Key, Val>     	master_case;
-    MapTestCase<challenger, Key, Val>  	challenger_case;
+    MultisetTestCase<master, Key>     	master_case;
+    MultisetTestCase<challenger, Key>  	challenger_case;
 };
 
-#endif /* FT_map_TESTER_HPP */
+#endif /* FT_MULTISET_TESTER_HPP */

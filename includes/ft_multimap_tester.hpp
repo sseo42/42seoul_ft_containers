@@ -1,8 +1,8 @@
-#ifndef FT_MAP_TESTER_HPP
-# define FT_MAP_TESTER_HPP
+#ifndef FT_MULTIMAP_TESTER_HPP
+# define FT_MULTIMAP_TESTER_HPP
 
 # include "ft_tester.hpp"
-# include "ft_map.hpp"
+# include "ft_multimap.hpp"
 # include <map>
 
 /**
@@ -10,14 +10,14 @@
  */
 
 template<typename Container, typename Key, typename Val>
-class MapTestCase
+class MultimapTestCase
 {
 public:
     typedef typename Container::iterator    iterator;
 
-    MapTestCase() {}
+    MultimapTestCase() {}
 
-    ~MapTestCase() {}
+    ~MultimapTestCase() {}
 
     Container& get_container()
     { return container; };
@@ -27,24 +27,14 @@ private:
 };
 
 template<typename Container>
-class MapTestCase<Container, int, int>
+class MultimapTestCase<Container, int, int>
 {
 public:
     typedef typename Container::iterator    iterator;
 
-    MapTestCase() {}
+    MultimapTestCase() {}
 
-    ~MapTestCase() {}
-
-	void operator_braket()
-	{
-		for (int i = 0; i < 1000; ++i)
-		{
-			container[i] = i + 1;
-		}
-		container[3] = 1004;
-		this->ret = container[3];
-	}
+    ~MultimapTestCase() {}
 
 	void insert()
 	{
@@ -133,28 +123,28 @@ private:
 };
 
 template<typename Key, typename Val>
-class MapTester : public TesterBase
+class MultimapTester : public TesterBase
 {
 public:
-    typedef typename std::map<Key, Val>            			master;
-    typedef typename ft::Map<Key, Val>             			challenger;
-    typedef typename std::map<Key, Val>::iterator  			master_iterator;
-    typedef typename ft::Map<Key, Val>::iterator  			challenger_iterator;
-	typedef typename std::map<Key, Val>::reverse_iterator	master_reverse_iterator;
-	typedef typename ft::Map<Key, Val>::reverse_iterator	challenger_reverse_iterator;
+    typedef typename std::multimap<Key, Val>            			master;
+    typedef typename ft::Multimap<Key, Val>             			challenger;
+    typedef typename std::multimap<Key, Val>::iterator  			master_iterator;
+    typedef typename ft::Multimap<Key, Val>::iterator  			challenger_iterator;
+	typedef typename std::multimap<Key, Val>::reverse_iterator	master_reverse_iterator;
+	typedef typename ft::Multimap<Key, Val>::reverse_iterator	challenger_reverse_iterator;
 
-    MapTester() : TesterBase("Map")
+    MultimapTester() : TesterBase("Multimap")
 	{ init_what_to_test(); }
 
-    MapTester(bool log_flag, std::string dir = "")
-        : TesterBase("Map", log_flag, dir)
+    MultimapTester(bool log_flag, std::string dir = "")
+        : TesterBase("Multimap", log_flag, dir)
 	{ init_what_to_test(); }
 
-    ~MapTester() {}
+    ~MultimapTester() {}
     
     void start_test()
     {
-		ASSERT(master_case.operator_braket(), challenger_case.operator_braket());
+		ASSERT(master_case.insert(), challenger_case.insert());
 		ASSERT(master_case.lower_bound(), challenger_case.lower_bound());
 		ASSERT(master_case.upper_bound(), challenger_case.upper_bound());
 		ASSERT(master_case.equal_range(), challenger_case.equal_range());
@@ -169,8 +159,6 @@ public:
 private:
 	void init_what_to_test()
 	{
-		what_to_test.insert(std::make_pair("operator_braket", "compare_ret"));
-
 		what_to_test.insert(std::make_pair("insert", "compare_size"));
 		what_to_test.insert(std::make_pair("insert", "compare_iterator"));
 		what_to_test.insert(std::make_pair("insert", "compare_reverse_iterator"));
@@ -300,8 +288,8 @@ private:
 		return 0;
 	}
 
-    MapTestCase<master, Key, Val>     	master_case;
-    MapTestCase<challenger, Key, Val>  	challenger_case;
+    MultimapTestCase<master, Key, Val>     	master_case;
+    MultimapTestCase<challenger, Key, Val>  	challenger_case;
 };
 
-#endif /* FT_map_TESTER_HPP */
+#endif /* FT_MULTIMAP_TESTER_HPP */
